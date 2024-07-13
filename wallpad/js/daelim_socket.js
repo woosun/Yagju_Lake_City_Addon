@@ -7,13 +7,15 @@
  * @수정일 2019-06-01
  * @대림이편한세상 용으로 수정 : 모근원
  * @수정일 2019-06-26
+ * @옥제풍 용으로 수정 중 : YOSKR
+ * @수정일 2024-07-13
  */
 
 const util = require('util');
 const SerialPort = require('serialport');
 const net = require('net');   // Socket
 const Delimiter = require('@serialport/parser-delimiter');
-const mqtt = require('mqtt');
+const mqtt = require('mqtt');
 
 const CONFIG = require('/data/options.json');  //**** 애드온의 옵션을 불러옵니다. 이후 CONFIG.mqtt.username 과 같이 사용가능합니다. 
 
@@ -58,19 +60,19 @@ const CONST = {
 				{deviceId: 'Door', subId: ['1'], stateStartWithHex: 'f720bb01110403000000000000f4'.buff(), open: 'Off'},
 				
 				//공동현관문
-				{deviceId: 'Door', subId: ['2'], stateStartWithHex: 'f720bb01110405000000000000f6'.buff(), open: 'On'} 
+				{deviceId: 'Door', subId: ['2'], stateStartWithHex: 'f720bb01110405000000000000f6'.buff(), open: 'On'},
 
-        //환풍기가 없음
-        // {deviceId: 'Fan', subId: '1', stateHex: Buffer.alloc(8,'F6000100000000F7','hex'), power: 'OFF', speed: 'low' },
-        // {deviceId: 'Fan', subId: '1', stateHex: Buffer.alloc(8,'F6040101000000FC','hex'), power: 'ON', speed: 'low' },
-        // {deviceId: 'Fan', subId: '1', stateHex: Buffer.alloc(8,'F6040102000000FD','hex'), power: 'ON', speed: 'mid' },
-        // {deviceId: 'Fan', subId: '1', stateHex: Buffer.alloc(8,'F6040103000000FE','hex'), power: 'ON', speed: 'high'},
-        // {deviceId: 'Fan', subId: '1', stateHex: Buffer.alloc(8,'F6020101000000FA','hex'), power: 'ON', speed: 'auto'}, //제어신호는 없음
-        // {deviceId: 'Fan', subId: '1', stateHex: Buffer.alloc(8,'F6060101000000FE','hex'), power: 'ON', speed: 'night'}, //제어신호는 없음
+        //환풍기
+        {deviceId: 'Fan', subId: '1', stateHex: Buffer.alloc(8,'F6 00 01 00 00 00 00 F7','hex'), power: 'OFF', speed: 'low' }, //끄기
+        {deviceId: 'Fan', subId: '1', stateHex: Buffer.alloc(8,'F6040101000000FC','hex'), power: 'ON', speed: 'low' }, //약하게
+        {deviceId: 'Fan', subId: '1', stateHex: Buffer.alloc(8,'F6040102000000FD','hex'), power: 'ON', speed: 'mid' }, //중간
+        {deviceId: 'Fan', subId: '1', stateHex: Buffer.alloc(8,'F6040103000000FE','hex'), power: 'ON', speed: 'high'}, //강하게
+        {deviceId: 'Fan', subId: '1', stateHex: Buffer.alloc(8,'F6020101000000FA','hex'), power: 'ON', speed: 'auto'}, //자동
+        {deviceId: 'Fan', subId: '1', stateHex: Buffer.alloc(8,'F6060101000000FE','hex'), power: 'ON', speed: 'night'}, //바이패스
 
-        //가스 안씀
-        // {deviceId: 'Gas', subId: '1', stateHex: Buffer.alloc(8,'9048480000000020','hex'), power: 'OFF'},
-        // {deviceId: 'Gas', subId: '1', stateHex: Buffer.alloc(8,'9040400000000010','hex'), power: 'ON'},
+        //가스
+        {deviceId: 'Gas', subId: '1', stateHex: Buffer.alloc(8,'9048480000000020','hex'), power: 'OFF'}, //가스잠금
+        {deviceId: 'Gas', subId: '1', stateHex: Buffer.alloc(8,'9040400000000010','hex'), power: 'ON'},
 
     ],
 
@@ -139,16 +141,16 @@ const CONST = {
         //아이방
         {deviceId: 'Thermo', subId: '4', setTemp: '0', power: 'off', commandHex: 'F7 20 44 01 11 0e 00 00 00 00 00 00 00 84 AA'.buff() , ackHex: '20014491'.buff()}, //off
         {deviceId: 'Thermo', subId: '4', power: 'heat',              commandHex: 'F7 20 44 01 11 8e 00 00 00 00 00 00 00 04 AA'.buff() , ackHex: '20014491'.buff()}, //heat
-        {deviceId: 'Thermo', subId: '4', setTemp: '',                commandHex: 'F7 20 44 01 11'.buff(), ackHex: '20014491'.buff()}
+        {deviceId: 'Thermo', subId: '4', setTemp: '',                commandHex: 'F7 20 44 01 11'.buff(), ackHex: '20014491'.buff()},
 
 
-        // {deviceId: 'Fan', subId: '1', commandHex: Buffer.alloc(8,'780101000000007A','hex'), ackHex: Buffer.alloc(8,'F8000100000000F9','hex'), power: 'OFF' }, //꺼짐
-        // {deviceId: 'Fan', subId: '1', commandHex: Buffer.alloc(8,'780101040000007E','hex'), ackHex: Buffer.alloc(8,'F8040101000000FE','hex'), power: 'ON'  }, //켜짐
-        // {deviceId: 'Fan', subId: '1', commandHex: Buffer.alloc(8,'780102010000007C','hex'), ackHex: Buffer.alloc(8,'F8040101000000FE','hex'), speed: 'low'   }, //약(켜짐)
-        // {deviceId: 'Fan', subId: '1', commandHex: Buffer.alloc(8,'780102020000007D','hex'), ackHex: Buffer.alloc(8,'F8040102000000FF','hex'), speed: 'medium'}, //중(켜짐)
-        // {deviceId: 'Fan', subId: '1', commandHex: Buffer.alloc(8,'780102030000007E','hex'), ackHex: Buffer.alloc(8,'F804010300000000','hex'), speed: 'high'  }, //강(켜짐)
+        {deviceId: 'Fan', subId: '1', commandHex: Buffer.alloc(8,'780101000000007A','hex'), ackHex: Buffer.alloc(8,'F8000100000000F9','hex'), power: 'OFF' }, //꺼짐
+        {deviceId: 'Fan', subId: '1', commandHex: Buffer.alloc(8,'780101040000007E','hex'), ackHex: Buffer.alloc(8,'F8040101000000FE','hex'), power: 'ON'  }, //켜짐
+        {deviceId: 'Fan', subId: '1', commandHex: Buffer.alloc(8,'780102010000007C','hex'), ackHex: Buffer.alloc(8,'F8040101000000FE','hex'), speed: 'low'   }, //약(켜짐)
+        {deviceId: 'Fan', subId: '1', commandHex: Buffer.alloc(8,'780102020000007D','hex'), ackHex: Buffer.alloc(8,'F8040102000000FF','hex'), speed: 'medium'}, //중(켜짐)
+        {deviceId: 'Fan', subId: '1', commandHex: Buffer.alloc(8,'780102030000007E','hex'), ackHex: Buffer.alloc(8,'F804010300000000','hex'), speed: 'high'  }, //강(켜짐)
 
-        // {deviceId: 'Gas', subId: '1', commandHex: Buffer.alloc(8,'1101800000000092','hex'), ackHex: Buffer.alloc(8,'9148480000000021','hex'), power: 'OFF' }, //꺼짐
+        {deviceId: 'Gas', subId: '1', commandHex: Buffer.alloc(8,'1101800000000092','hex'), ackHex: Buffer.alloc(8,'9148480000000021','hex'), power: 'OFF' }, //꺼짐
 
 
     ],
@@ -175,7 +177,7 @@ var queue = new Array();
 
 //////////////////////////////////////////////////////////////////////////////////////
 // MQTT-Broker 연결
-const client  = mqtt.connect(CONST.mqttBroker, {clientId: CONST.clientID,
+const client = mqtt.connect(CONST.mqttBroker, {clientId: CONST.clientID,
                                                 username: CONST.mqttUser,
                                                 password: CONST.mqttPass});
 client.on('connect', () => {
@@ -195,7 +197,7 @@ const parser = sock.pipe(new Delimiter({ delimiter: [0xAA] }));
 parser.on('data', function (data) {
 
     //수신 데이터 로그
-    //log('Receive interval: ', (new Date().getTime())-lastReceive, 'ms -> (',data[0],') ', data.toString('hex'));
+    log('Receive interval: ', (new Date().getTime())-lastReceive, 'ms -> (',data[0],') ', data.toString('hex'));
     lastReceive = new Date().getTime();
 
 ////////// states [start]
@@ -222,7 +224,7 @@ parser.on('data', function (data) {
 
 
        //상태 정보 외의 로그
-       // log('Receive : ', (new Date().getTime())-lastReceive, 'ms -> ', data.toString('hex'));
+       log('Receive : ', (new Date().getTime())-lastReceive, 'ms -> ', data.toString('hex'));
      
 
 });
