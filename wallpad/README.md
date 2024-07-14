@@ -6,9 +6,11 @@
 그레고리 하우스님이 만든 nodejs 월패드 프로그램을 애드온으로 만든 것입니다.
 코맥스, 삼성, 대림 아파트 월패드를 동작시킬 수 있는 nodejs 서버입니다. 
 커스텀파일 설정이 가능해서 본인이 사용하는 nodejs 파일이 있다면 교체해서 쓰시면 됩니다.
+개인커스텀 파일을 적용중이며 옥제풍용으로 수정중입니다.
+
 [네이버 Homeassistant 카페](https://cafe.naver.com/koreassistant)
 
-## Version : 0.8.7
+## Version : 0.9.0
 
 ## Installation
 

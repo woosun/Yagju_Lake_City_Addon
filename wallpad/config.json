@@ -38,8 +38,8 @@
     }
   },
   "schema": {
-    "model":"list(commax|samsung|daelim|hyundai)",
-    "type": "list(serial|socket)",
+    "model":"list(cvnet)",
+    "type": "list(socket)",
     "sendDelay": "int",
     "serial":{
       "port": "str?",
