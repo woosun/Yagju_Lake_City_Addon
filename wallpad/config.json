@@ -38,7 +38,7 @@
     }
   },
   "schema": {
-    "model":"list(daelim)",
+    "model":"list(daelim|hyundai)",
     "type": "list(socket)",
     "sendDelay": "int",
     "serial":{
