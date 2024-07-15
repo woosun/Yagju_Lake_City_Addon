@@ -18,8 +18,8 @@
   "boot": "auto",
   "uart": true,
   "options": {
-    "model":"commax",
-    "type": "serial",
+    "model":"cvnet",
+    "type": "socket",
     "sendDelay": 150,
     "serial":{
       "port": "/dev/ttyUSB0",
