@@ -195,7 +195,7 @@ const parser = sock.pipe(new Delimiter({ delimiter: [0xAA] }));
 parser.on('data', function (data) {
 
     //수신 데이터 로그
-    log('Receive interval: ', (new Date().getTime())-lastReceive, 'ms -> (',data[0],') ', data.toString('hex'));
+    //log('Receive interval: ', (new Date().getTime())-lastReceive, 'ms -> (',data[0],') ', data.toString('hex'));
     lastReceive = new Date().getTime();
 
 ////////// states [start]
