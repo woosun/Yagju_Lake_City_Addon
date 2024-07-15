@@ -2,7 +2,7 @@
   "name": "Wallpad Controller with RS485",
   "version": "0.9",
   "slug": "wallpad",
-  "description": "CVNET 가능한 nodejs 서버 애드온입니다.",
+  "description": "코맥스/삼성/대림 월패드가 가능한 nodejs 서버 애드온입니다.",
   "arch": [
     "armhf",
     "armv7",
@@ -13,13 +13,13 @@
   "map": [
     "share:rw"
   ],
-  "url": "https://github.com/woosun/Yagju_Lake_City_Addon",
+  "url": "https://github.com/HAKorea/addons",
   "startup": "application",
   "boot": "auto",
   "uart": true,
   "options": {
-    "model":"daelim",
-    "type": "socket",
+    "model":"commax",
+    "type": "serial",
     "sendDelay": 150,
     "serial":{
       "port": "/dev/ttyUSB0",
@@ -38,8 +38,8 @@
     }
   },
   "schema": {
-    "model":"list(daelim|hyundai)",
-    "type": "list(socket)",
+    "model":"list(commax|samsung|daelim|hyundai)",
+    "type": "list(serial|socket)",
     "sendDelay": "int",
     "serial":{
       "port": "str?",
