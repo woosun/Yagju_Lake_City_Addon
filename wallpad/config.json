@@ -18,7 +18,7 @@
   "boot": "auto",
   "uart": true,
   "options": {
-    "model":"cvnet",
+    "model":"daelim",
     "type": "socket",
     "sendDelay": 150,
     "serial":{
@@ -38,7 +38,7 @@
     }
   },
   "schema": {
-    "model":"list(cvnet)",
+    "model":"list(daelim)",
     "type": "list(socket)",
     "sendDelay": "int",
     "serial":{
