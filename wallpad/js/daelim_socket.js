@@ -13,7 +13,7 @@ const util = require('util');
 const SerialPort = require('serialport');
 const net = require('net');   // Socket
 const Delimiter = require('@serialport/parser-delimiter');
-const mqtt = require('mqtt');
+const mqtt = require('mqtt');
 
 const CONFIG = require('/data/options.json');  //**** 애드온의 옵션을 불러옵니다. 이후 CONFIG.mqtt.username 과 같이 사용가능합니다. 
 
@@ -58,19 +58,19 @@ const CONST = {
 				{deviceId: 'Door', subId: ['1'], stateStartWithHex: 'f720bb01110403000000000000f4'.buff(), open: 'Off'},
 				
 				//공동현관문
-				{deviceId: 'Door', subId: ['2'], stateStartWithHex: 'f720bb01110405000000000000f6'.buff(), open: 'On'} 
+				{deviceId: 'Door', subId: ['2'], stateStartWithHex: 'f720bb01110405000000000000f6'.buff(), open: 'On'},
 
-        //환풍기가 없음
-        // {deviceId: 'Fan', subId: '1', stateHex: Buffer.alloc(8,'F6000100000000F7','hex'), power: 'OFF', speed: 'low' },
-        // {deviceId: 'Fan', subId: '1', stateHex: Buffer.alloc(8,'F6040101000000FC','hex'), power: 'ON', speed: 'low' },
-        // {deviceId: 'Fan', subId: '1', stateHex: Buffer.alloc(8,'F6040102000000FD','hex'), power: 'ON', speed: 'mid' },
-        // {deviceId: 'Fan', subId: '1', stateHex: Buffer.alloc(8,'F6040103000000FE','hex'), power: 'ON', speed: 'high'},
-        // {deviceId: 'Fan', subId: '1', stateHex: Buffer.alloc(8,'F6020101000000FA','hex'), power: 'ON', speed: 'auto'}, //제어신호는 없음
-        // {deviceId: 'Fan', subId: '1', stateHex: Buffer.alloc(8,'F6060101000000FE','hex'), power: 'ON', speed: 'night'}, //제어신호는 없음
+        //전열교환기
+        {deviceId: 'Fan', subId: '1', stateStartWithHex: 'f7207101110000000000000000a3'.buff(), power: 'OFF', speed: 'low' },
+        {deviceId: 'Fan', subId: '1', stateStartWithHex: 'f7207101110101010000000000a6'.buff(), power: 'ON', speed: 'low' },
+        {deviceId: 'Fan', subId: '1', stateStartWithHex: 'f7207101110101020000000000a7'.buff(), power: 'ON', speed: 'mid' },
+        {deviceId: 'Fan', subId: '1', stateStartWithHex: 'f7207101110101030000000000a8'.buff(), power: 'ON', speed: 'high'},
+        //{deviceId: 'Fan', subId: '1', stateStartWithHex: 'f720bb01110405000000000000f6'.buff(), power: 'ON', speed: 'auto'}, //제어신호는 없음
+        //{deviceId: 'Fan', subId: '1', stateStartWithHex: 'f720bb01110405000000000000f6'.buff(), power: 'ON', speed: 'night'}, //제어신호는 없음
 
         //가스 안씀
-        // {deviceId: 'Gas', subId: '1', stateHex: Buffer.alloc(8,'9048480000000020','hex'), power: 'OFF'},
-        // {deviceId: 'Gas', subId: '1', stateHex: Buffer.alloc(8,'9040400000000010','hex'), power: 'ON'},
+        {deviceId: 'Gas', subId: ['1'], stateStartWithHex: 'f720018b9f01010000000000004d'.buff(), open: 'On'},
+        {deviceId: 'Gas', subId: ['1'], stateStartWithHex: 'f720018b9f01000000000000004c'.buff(), open: 'Off'} 
 
     ],
 
@@ -139,16 +139,25 @@ const CONST = {
         //아이방
         {deviceId: 'Thermo', subId: '4', setTemp: '0', power: 'off', commandHex: 'F7 20 44 01 11 0e 00 00 00 00 00 00 00 84 AA'.buff() , ackHex: '20014491'.buff()}, //off
         {deviceId: 'Thermo', subId: '4', power: 'heat',              commandHex: 'F7 20 44 01 11 8e 00 00 00 00 00 00 00 04 AA'.buff() , ackHex: '20014491'.buff()}, //heat
-        {deviceId: 'Thermo', subId: '4', setTemp: '',                commandHex: 'F7 20 44 01 11'.buff(), ackHex: '20014491'.buff()}
+        {deviceId: 'Thermo', subId: '4', setTemp: '',                commandHex: 'F7 20 44 01 11'.buff(), ackHex: '20014491'.buff()},
 
+        //전열교환기
+        //{deviceId: 'Fan', subId: '1', commandHex: Buffer.alloc(8,'780101000000007A','hex'), ackHex: Buffer.alloc(8,'F8000100000000F9','hex'), power: 'OFF' }, //꺼짐
+        //F7207101110001030000000000A7AA F7200171910001030D0000000034AA
+        //{deviceId: 'Fan', subId: '1', commandHex: Buffer.alloc(8,'780101040000007E','hex'), ackHex: Buffer.alloc(8,'F8040101000000FE','hex'), power: 'ON'  }, //켜짐
+        //F7207101110101010000000000A6AA F7200171910101010D0000000033AA
+        //{deviceId: 'Fan', subId: '1', commandHex: Buffer.alloc(8,'780102010000007C','hex'), ackHex: Buffer.alloc(8,'F8040101000000FE','hex'), speed: 'low'   }, //약(켜짐)
+        //F7207101110101010000000000A6AA F7200171910101010D0000000033AA
+        //{deviceId: 'Fan', subId: '1', commandHex: Buffer.alloc(8,'780102020000007D','hex'), ackHex: Buffer.alloc(8,'F8040102000000FF','hex'), speed: 'medium'}, //중(켜짐)
+        //{deviceId: 'Fan', subId: '1', commandHex: Buffer.alloc(8,'780102030000007E','hex'), ackHex: Buffer.alloc(8,'F804010300000000','hex'), speed: 'high'  }, //강(켜짐)
+        //F7207101110101030000000000A8AA F7200171910101030D0000000035AA
+        //전열교환기
+        {deviceId: 'fan', subId: '1', power: 'off', speed: 'Low' ,    commandHex: 'F7 20 71 01 11 00 00 00 00 00 00 00 00 A3 AA'.buff(), ackHex: '20017191'.buff()}, //off
+        {deviceId: 'fan', subId: '1', power: 'on', speed: 'Low' ,     commandHex: 'F7 20 71 01 11 01 01 01 00 00 00 00 00 A6 AA'.buff(), ackHex: '20017191'.buff()}, //low
+        {deviceId: 'fan', subId: '1', power: 'on', speed: 'Middle' ,  commandHex: 'F7 20 71 01 11 01 01 02 00 00 00 00 00 A7 AA'.buff(), ackHex: '20017191'.buff()}, //middle
+        {deviceId: 'fan', subId: '1', power: 'on', speed: 'High' ,    commandHex: 'F7 20 71 01 11 01 01 03 00 00 00 00 00 A8 AA'.buff(), ackHex: '20017191'.buff()}, //high
 
-        // {deviceId: 'Fan', subId: '1', commandHex: Buffer.alloc(8,'780101000000007A','hex'), ackHex: Buffer.alloc(8,'F8000100000000F9','hex'), power: 'OFF' }, //꺼짐
-        // {deviceId: 'Fan', subId: '1', commandHex: Buffer.alloc(8,'780101040000007E','hex'), ackHex: Buffer.alloc(8,'F8040101000000FE','hex'), power: 'ON'  }, //켜짐
-        // {deviceId: 'Fan', subId: '1', commandHex: Buffer.alloc(8,'780102010000007C','hex'), ackHex: Buffer.alloc(8,'F8040101000000FE','hex'), speed: 'low'   }, //약(켜짐)
-        // {deviceId: 'Fan', subId: '1', commandHex: Buffer.alloc(8,'780102020000007D','hex'), ackHex: Buffer.alloc(8,'F8040102000000FF','hex'), speed: 'medium'}, //중(켜짐)
-        // {deviceId: 'Fan', subId: '1', commandHex: Buffer.alloc(8,'780102030000007E','hex'), ackHex: Buffer.alloc(8,'F804010300000000','hex'), speed: 'high'  }, //강(켜짐)
-
-        // {deviceId: 'Gas', subId: '1', commandHex: Buffer.alloc(8,'1101800000000092','hex'), ackHex: Buffer.alloc(8,'9148480000000021','hex'), power: 'OFF' }, //꺼짐
+        {deviceId: 'Gas', subId: '1', commandHex: Buffer.alloc(8,'1101800000000092','hex'), ackHex: Buffer.alloc(8,'9148480000000021','hex'), power: 'OFF' }, //꺼짐
 
 
     ],
@@ -175,7 +184,7 @@ var queue = new Array();
 
 //////////////////////////////////////////////////////////////////////////////////////
 // MQTT-Broker 연결
-const client  = mqtt.connect(CONST.mqttBroker, {clientId: CONST.clientID,
+const client  = mqtt.connect(CONST.mqttBroker, {clientId: CONST.clientID,
                                                 username: CONST.mqttUser,
                                                 password: CONST.mqttPass});
 client.on('connect', () => {
@@ -269,6 +278,8 @@ var updateStatus = (obj, data) => {
             } else { //파워
               value = (parseInt(data[obj.whereToReadBlock[i]-1], 10) < 100)?"off":"heat";
             }
+          } else if (obj.deviceId == 'fan') { //전열교환기 2이상 high 1 middle 0 low 0 off
+            value = (data[obj.whereToReadBlock[i]] > 2)?"High":(data[obj.whereToReadBlock[i]] > 1)?"Middle":(data[obj.whereToReadBlock[i]] > 0)?"Low":"Off";
           } else {
            //etc..
            value = obj[stateName];
@@ -305,7 +316,7 @@ var thermoValue = (strValue) => {
   return (intVal > 100)?(intVal - 128):intVal;
 }
 //////////////////////////////////////////////////////////////////////////////////////
-// HA에서 MQTT로 제어 명령 수신
+// HA => MQTT로 제어 명령 수신
 client.on('message', (topic, message) => {
 
     if(mqttReady) {
