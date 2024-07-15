@@ -1,4 +1,4 @@
-# Universal Wallpad Controller with RS485 - 수정중
+# CV-Net Wallpad Controller with RS485 - 수정중 0.1
 
 ![Supports aarch64 Architecture][aarch64-shield] ![Supports amd64 Architecture][amd64-shield] ![Supports armhf Architecture][armhf-shield] ![Supports armv7 Architecture][armv7-shield] ![Supports i386 Architecture][i386-shield]
 
@@ -10,7 +10,7 @@
 
 [네이버 Homeassistant 카페](https://cafe.naver.com/koreassistant)
 
-## Version : 0.9.0
+## Version : 0.1.0
 
 ## Installation
 
