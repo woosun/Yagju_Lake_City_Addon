@@ -248,7 +248,7 @@ var updateStatus = (obj, data) => {
     var arrStateName = Object.keys(obj);
 
     //상태를 쏠 state 만 돌린다.
-    const aplyFilter = ['power','curTemp','setTemp','brightness','open','elevator-state'];
+    const aplyFilter = ['power','curTemp','setTemp','brightness','open','elevator-state','speed'];
     arrStateName = arrStateName.filter(stateName => aplyFilter.includes(stateName));
 
     for (var i=0; i<obj.subId.length; i++ ){  //한 데이터에 여러건의 정보가 있는 경우 처리

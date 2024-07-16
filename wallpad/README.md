@@ -1,4 +1,4 @@
-# CV-Net Wallpad Controller with RS485 - 수정중 0.1
+# CVNet Wallpad Controller with RS485 - 수정중 0.1.2
 
 ![Supports aarch64 Architecture][aarch64-shield] ![Supports amd64 Architecture][amd64-shield] ![Supports armhf Architecture][armhf-shield] ![Supports armv7 Architecture][armv7-shield] ![Supports i386 Architecture][i386-shield]
 
@@ -12,6 +12,19 @@
 
 ## Version : 0.1.2
 
+## 알고리즘 분석
+
+1. 이녀석이 rs485 와 통신하여 패킷을 가져와서 분석후
+2. 분석한 패킷을 기준으로 토픽을 만들어 MQTT로 전송
+   > 분석한 패킷은 아래형식으로 리턴
+    ```
+    // 상태 Topic (/homenet/${deviceId}${subId}/${property}/state/ = ${value})
+    // 명령어 Topic (/homenet/${deviceId}${subId}/${property}/command/ = ${value})
+    TOPIC_PRFIX: 'homenet',
+    STATE_TOPIC: 'homenet/%s%s/%s/state', //상태 전달
+    DEVICE_TOPIC: 'homenet/+/+/command' //명령 수신
+    ```
+3. MQTT로 전송받은 토픽을 기준으로 처리
 ## Installation
 
 1. 홈어시스턴트의 Hass.io > ADD-ON STORE에서 Add new repository by URL에 https://github.com/HAKorea/addons 를 입력한 다음 ADD 버튼을 누릅니다.
@@ -24,6 +37,7 @@
 8. "START" 버튼으로 애드온을 실행합니다.
 
 애드온을 최초 실행하면 share/모델명_wallpad.js 파일이 생성됩니다. 모델명_wallpad.js 파일은 본인의 월패드에 맞게 수정하셔도 됩니다. 수정한 후 애드온을 재실행하면 수정한 js 파일로 실행됩니다. 
+
 
 
 
