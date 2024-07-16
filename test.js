@@ -3,7 +3,7 @@ const net = require('net');
 // 설정 객체
 const CONFIG = {
     socket: {
-        deviceIP: '192.168.0.*',  // 실제 기기 IP로 변경해주세요
+        deviceIP: '192.168.0.20',  // 실제 기기 IP로 변경해주세요
         port: 8899
     }
 };
@@ -49,8 +49,8 @@ function analyzePacket(data) {
     const parityBit = data[13];
     const endByte = data[14];
 
-    log('Device ID:', deviceId);
-    log('Status Code:', statusCode);
+    //log('Device ID:', deviceId);
+    //log('Status Code:', statusCode);
 
     // 종료 바이트 확인
     if (endByte !== 0xAA) {
@@ -67,10 +67,10 @@ function analyzePacket(data) {
             //analyzeThermoPacket(data);
             break;
         case '200171':
-            analyzeFanPacket(data);
+            //analyzeFanPacket(data);
             break;
         default:
-            //analyzeUnknownPacket(data);
+            analyzeUnknownPacket(data);
     }
 }
 
@@ -126,7 +126,7 @@ sock.on('data', function(data) {
         const packet = buffer.slice(0, 15);
         buffer = buffer.slice(15);
         
-        log('Receive interval:', (new Date().getTime()) - lastReceive, 'ms');
+        //log('Receive interval:', (new Date().getTime()) - lastReceive, 'ms');
         lastReceive = new Date().getTime();
 
         analyzePacket(packet);

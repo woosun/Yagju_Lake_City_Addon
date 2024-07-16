@@ -236,7 +236,7 @@ parser.on('data', function (data) {
 
 
        //상태 정보 외의 로그
-       log('Receive : ', (new Date().getTime())-lastReceive, 'ms -> ', data.toString('hex'));
+       //log('Receive : ', (new Date().getTime())-lastReceive, 'ms -> ', data.toString('hex'));
      
 
 });
