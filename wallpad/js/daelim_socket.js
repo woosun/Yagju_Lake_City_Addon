@@ -63,7 +63,7 @@ const CONST = {
 				{deviceId: 'Door', subId: ['2'], stateStartWithHex: 'f720bb01110405000000000000f6'.buff(), open: 'On'},
 
         //전열교환기
-        {deviceId: 'Fan', subId: '1', stateStartWithHex: 'F7 20 01 71 81'.buff() , whereToReadBlock: [6,8], power: '', speed:''},
+        {deviceId: 'Fan', subId: ['1'], stateStartWithHex: 'F7 20 01 71 81'.buff() , whereToReadBlock: [6], power: '', speed:''},
         //{deviceId: 'Fan', subId: '1', stateStartWithHex: 'f7207101110101010000000000a6'.buff(), power: 'ON', speed: 'low' },
         //{deviceId: 'Fan', subId: '1', stateStartWithHex: 'f7207101110101020000000000a7'.buff(), power: 'ON', speed: 'mid' },
         //{deviceId: 'Fan', subId: '1', stateStartWithHex: 'f7207101110101030000000000a8'.buff(), power: 'ON', speed: 'high'},
@@ -71,7 +71,7 @@ const CONST = {
         //{deviceId: 'Fan', subId: '1', stateStartWithHex: 'f720bb01110405000000000000f6'.buff(), power: 'ON', speed: 'night'}, //제어신호는 없음
 
         //엘리베이터
-        //{deviceId: 'elv', subId: ['1'], stateStartWithHex: 'F7 20 01 22 81'.buff() , whereToReadBlock: [6], power: ''},
+        //{deviceId: 'elevator', subId: ['1'], stateStartWithHex: 'F7 20 01 22 81'.buff() , whereToReadBlock: [6], power: ''},
         //가스 안씀
         //{deviceId: 'Gas', subId: ['1'], stateStartWithHex: 'F7 20 01 22 81'.buff() , whereToReadBlock: [6], power: ''},
         //{deviceId: 'Gas', subId: ['1'], stateStartWithHex: 'f7 20 01 8b 9f 01000000000000004c'.buff(), open: 'Off'} 
@@ -235,7 +235,7 @@ parser.on('data', function (data) {
 
 
        //상태 정보 외의 로그
-       // log('Receive : ', (new Date().getTime())-lastReceive, 'ms -> ', data.toString('hex'));
+       log('Receive : ', (new Date().getTime())-lastReceive, 'ms -> ', data.toString('hex'));
      
 
 });
@@ -248,7 +248,7 @@ var updateStatus = (obj, data) => {
     var arrStateName = Object.keys(obj);
 
     //상태를 쏠 state 만 돌린다.
-    const aplyFilter = ['power','curTemp','setTemp','brightness','open'];
+    const aplyFilter = ['power','curTemp','setTemp','brightness','open','elevator-state'];
     arrStateName = arrStateName.filter(stateName => aplyFilter.includes(stateName));
 
     for (var i=0; i<obj.subId.length; i++ ){  //한 데이터에 여러건의 정보가 있는 경우 처리
