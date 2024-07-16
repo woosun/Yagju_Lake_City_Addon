@@ -280,8 +280,12 @@ var updateStatus = (obj, data) => {
             } else { //파워
               value = (parseInt(data[obj.whereToReadBlock[i]-1], 10) < 100)?"off":"heat";
             }
-          } else if (obj.deviceId == 'fan') { //전열교환기 2이상 high 1 middle 0 low 0 off
-            value = (data[obj.whereToReadBlock[i]] > 2)?"High":(data[obj.whereToReadBlock[i]] > 1)?"Middle":(data[obj.whereToReadBlock[i]] > 0)?"Low":"Off";
+          } else if (obj.deviceId == 'fan') {
+            if (stateName=='power'){
+              value = (data[obj.whereToReadBlock[i]] > 0 )? "ON":"Off";
+            }else if (stateName=='speed'){ 
+              value = (data[obj.whereToReadBlock[i]] > 3)?"High":(data[obj.whereToReadBlock[i]] > 2)?"Middle":(data[obj.whereToReadBlock[i]] > 1)?"Low":"Off";
+            }
           } else {
            //etc..
            value = obj[stateName];
