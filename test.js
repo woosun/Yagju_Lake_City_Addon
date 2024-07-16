@@ -10,9 +10,10 @@ const CONFIG = {
 
 // 사전 정의된 패킷 목록
 const PREDEFINED_PACKETS = [
-    'f7200121810000000000000000c3aa',
-    'F720017181000100000000000014aa',
-    'f720014a81151d061b051b0f1d8baa',
+    'f7200121810000000000000000c3aa',//조명
+    'f7200122810000000000000000c4aa',//조명
+    'F720017181000100000000000014aa',//팬
+    'f720014a81151d061b051b0f1d8baa',//난방
     // 추가 패킷...
 ];
 
@@ -61,9 +62,11 @@ function analyzePacket(data) {
     // 디바이스 ID에 따른 분석
     switch(deviceId) {
         case '200121':
+        case '200122':
             //analyzeLightPacket(data);
             break;
         case '20014a':
+        case '20014b':
             //analyzeThermoPacket(data);
             break;
         case '200171':

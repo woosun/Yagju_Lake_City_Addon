@@ -44,13 +44,13 @@ const CONST = {
     // 기기별 상태 및 제어 코드(HEX)
     DEVICE_STATE: [
         //거실조명 (메인), 2, 3
-        {deviceId: 'Light', subId: ['1','2','3'], stateStartWithHex: 'f7 20  01  21  81'.buff() , whereToReadBlock: [6,7,8], power: '', brightness: ''},
+        {deviceId: 'Light', subId: ['1','2','3'], stateStartWithHex: 'f7 20 01 21 81'.buff() , whereToReadBlock: [6,7,8], power: '', brightness: ''},
         //게임방 1,2
-        {deviceId: 'Light', subId: ['4','5'],     stateStartWithHex: 'f7 20  01  22  81'.buff() , whereToReadBlock: [6,7], power: ''},
+        {deviceId: 'Light', subId: ['4','5'],     stateStartWithHex: 'f7 20 01 22 81'.buff() , whereToReadBlock: [6,7], power: ''},
         //침실
-        {deviceId: 'Light', subId: ['6'],         stateStartWithHex: 'f7 20  01  23  81'.buff() , whereToReadBlock: [6], power: ''},
+        {deviceId: 'Light', subId: ['6'],         stateStartWithHex: 'f7 20 01 23 81'.buff() , whereToReadBlock: [6], power: ''},
         //아이방
-        {deviceId: 'Light', subId: ['7'],         stateStartWithHex: 'f7 20  01  24  81'.buff() , whereToReadBlock: [6], power: ''},
+        {deviceId: 'Light', subId: ['7'],         stateStartWithHex: 'f7 20 01 24 81'.buff() , whereToReadBlock: [6], power: ''},
 
         //난방 거실,게임방,침실,아이방
         {deviceId: 'Thermo', subId: ['1','2','3','4'], stateStartWithHex: 'f7 20 01 4A 81'.buff() , whereToReadBlock: [6,8,10,12],  setTemp: '', curTemp: '', power: ''},
@@ -63,11 +63,8 @@ const CONST = {
 				{deviceId: 'Door', subId: ['2'], stateStartWithHex: 'f720bb01110405000000000000f6'.buff(), open: 'On'},
 
         //전열교환기
-        //{deviceId: 'Fan', subId: ['1'], stateStartWithHex: 'F7 20 01 71 81'.buff() , whereToReadBlock: [7], power: '', speed:''},
-        {deviceId: 'Fan', subId: '1', stateStartWithHex: 'F720017181000100000000000014'.buff(), power: 'Off', speed: '' },
-        {deviceId: 'Fan', subId: '1', stateStartWithHex: 'F720017181010101000000000016'.buff(), power: 'ON', speed: 'low' },
-        {deviceId: 'Fan', subId: '1', stateStartWithHex: 'F720017181010102000000000017'.buff(), power: 'ON', speed: 'mid' },
-        {deviceId: 'Fan', subId: '1', stateStartWithHex: 'F720017181010103000000000018'.buff(), power: 'ON', speed: 'high'},
+        {deviceId: 'Fan', subId: ['1'], stateStartWithHex: 'F7 20 01 71 81'.buff() , whereToReadBlock: [6,7], power: '', speed:''},
+
         //{deviceId: 'Fan', subId: '1', stateStartWithHex: 'F720017181000100000000000014'.buff(), power: 'ON', speed: 'auto'}, //제어신호는 없음
         //{deviceId: 'Fan', subId: '1', stateStartWithHex: 'F720017181000100000000000014'.buff(), power: 'ON', speed: 'night'}, //제어신호는 없음
 
