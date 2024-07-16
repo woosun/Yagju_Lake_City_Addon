@@ -70,7 +70,7 @@ function analyzePacket(data) {
             //analyzeThermoPacket(data);
             break;
         case '200171':
-            //analyzeFanPacket(data);
+            analyzeFanPacket(data);
             break;
         default:
             analyzeUnknownPacket(data);

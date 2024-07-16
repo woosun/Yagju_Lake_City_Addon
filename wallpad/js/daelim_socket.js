@@ -12,9 +12,9 @@
  */
 
 const util = require('util');
-const SerialPort = require('serialport');
+//const SerialPort = require('serialport');
 const net = require('net');   // Socket
-const Delimiter = require('@serialport/parser-delimiter');
+//const Delimiter = require('@serialport/parser-delimiter');
 const mqtt = require('mqtt');
 
 const CONFIG = require('/data/options.json');  //**** 애드온의 옵션을 불러옵니다. 이후 CONFIG.mqtt.username 과 같이 사용가능합니다. 
@@ -63,7 +63,7 @@ const CONST = {
 				{deviceId: 'Door', subId: ['2'], stateStartWithHex: 'f720bb01110405000000000000f6'.buff(), open: 'On'},
 
         //전열교환기
-        {deviceId: 'Fan', subId: ['1'], stateStartWithHex: 'F7 20 01 71 81'.buff() , whereToReadBlock: [6,7], power: '', speed:''},
+        {deviceId: 'Fan', subId: ['1'], stateStartWithHex: 'F7 20 01 71 81'.buff() , whereToReadBlock: [5,7], power: '', speed:''},
 
         //{deviceId: 'Fan', subId: '1', stateStartWithHex: 'F720017181000100000000000014'.buff(), power: 'ON', speed: 'auto'}, //제어신호는 없음
         //{deviceId: 'Fan', subId: '1', stateStartWithHex: 'F720017181000100000000000014'.buff(), power: 'ON', speed: 'night'}, //제어신호는 없음
@@ -282,7 +282,7 @@ var updateStatus = (obj, data) => {
             }
           } else if (obj.deviceId == 'fan') {
             if (stateName=='power'){
-              value = (data[obj.whereToReadBlock[i]] > 0 )? "ON":"Off";
+              value = (data[obj.whereToReadBlock[i]] > 0 )?"ON":"Off";
             }else if (stateName=='speed'){ 
               value = (data[obj.whereToReadBlock[i]] > 3)?"High":(data[obj.whereToReadBlock[i]] > 2)?"Middle":(data[obj.whereToReadBlock[i]] > 1)?"Low":"Off";
             }
