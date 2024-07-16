@@ -63,16 +63,18 @@ const CONST = {
 				{deviceId: 'Door', subId: ['2'], stateStartWithHex: 'f720bb01110405000000000000f6'.buff(), open: 'On'},
 
         //전열교환기
-        {deviceId: 'Fan', subId: '1', stateStartWithHex: 'f7207101110000000000000000a3'.buff(), power: 'OFF', speed: 'low' },
-        {deviceId: 'Fan', subId: '1', stateStartWithHex: 'f7207101110101010000000000a6'.buff(), power: 'ON', speed: 'low' },
-        {deviceId: 'Fan', subId: '1', stateStartWithHex: 'f7207101110101020000000000a7'.buff(), power: 'ON', speed: 'mid' },
-        {deviceId: 'Fan', subId: '1', stateStartWithHex: 'f7207101110101030000000000a8'.buff(), power: 'ON', speed: 'high'},
+        {deviceId: 'Fan', subId: '1', stateStartWithHex: 'F7 20 01 71 81'.buff() , whereToReadBlock: [6,8], power: '', speed:''},
+        //{deviceId: 'Fan', subId: '1', stateStartWithHex: 'f7207101110101010000000000a6'.buff(), power: 'ON', speed: 'low' },
+        //{deviceId: 'Fan', subId: '1', stateStartWithHex: 'f7207101110101020000000000a7'.buff(), power: 'ON', speed: 'mid' },
+        //{deviceId: 'Fan', subId: '1', stateStartWithHex: 'f7207101110101030000000000a8'.buff(), power: 'ON', speed: 'high'},
         //{deviceId: 'Fan', subId: '1', stateStartWithHex: 'f720bb01110405000000000000f6'.buff(), power: 'ON', speed: 'auto'}, //제어신호는 없음
         //{deviceId: 'Fan', subId: '1', stateStartWithHex: 'f720bb01110405000000000000f6'.buff(), power: 'ON', speed: 'night'}, //제어신호는 없음
 
+        //엘리베이터
+        //{deviceId: 'elv', subId: ['1'], stateStartWithHex: 'F7 20 01 22 81'.buff() , whereToReadBlock: [6], power: ''},
         //가스 안씀
-        {deviceId: 'Gas', subId: ['1'], stateStartWithHex: 'f720018b9f01010000000000004d'.buff(), open: 'On'},
-        {deviceId: 'Gas', subId: ['1'], stateStartWithHex: 'f720018b9f01000000000000004c'.buff(), open: 'Off'} 
+        //{deviceId: 'Gas', subId: ['1'], stateStartWithHex: 'F7 20 01 22 81'.buff() , whereToReadBlock: [6], power: ''},
+        //{deviceId: 'Gas', subId: ['1'], stateStartWithHex: 'f7 20 01 8b 9f 01000000000000004c'.buff(), open: 'Off'} 
 
     ],
 

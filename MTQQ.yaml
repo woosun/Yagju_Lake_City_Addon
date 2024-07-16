@@ -1,0 +1,95 @@
+    - light:
+        name: "거실등1"
+        state_topic: "homenet/Light1/power/state"
+        command_topic: "homenet/Light1/power/command"
+    - light:
+        name: "거실등2"
+        state_topic: "homenet/Light2/power/state"
+        command_topic: "homenet/Light2/power/command"
+    - light:
+        name: "복도등"
+        state_topic: "homenet/Light3/power/state"
+        command_topic: "homenet/Light3/power/command"
+    - light:
+        name: "안방등"
+        state_topic: "homenet/Light4/power/state"
+        command_topic: "homenet/Light4/power/command"
+
+    - climate:
+        name: "거실-난방"
+        mode_state_topic: "homenet/Thermo1/power/state"
+        mode_command_topic: "homenet/Thermo1/power/command"
+        temperature_state_topic: "homenet/Thermo1/setTemp/state"
+        temperature_command_topic: "homenet/Thermo1/setTemp/command"
+        current_temperature_topic: "homenet/Thermo1/curTemp/state"
+        modes:
+          - "off"
+          - "heat"
+        min_temp: 5
+        max_temp: 28
+
+    - climate:
+        name: "안방-난방"
+        mode_state_topic: "homenet/Thermo2/power/state"
+        mode_command_topic: "homenet/Thermo2/power/command"
+        temperature_state_topic: "homenet/Thermo2/setTemp/state"
+        temperature_command_topic: "homenet/Thermo2/setTemp/command"
+        current_temperature_topic: "homenet/Thermo2/curTemp/state"
+        modes:
+          - "off"
+          - "heat"
+        min_temp: 5
+        max_temp: 28
+
+    - climate:
+        name: "아부지방-난방"
+        mode_state_topic: "homenet/Thermo3/power/state"
+        mode_command_topic: "homenet/Thermo3/power/command"
+        temperature_state_topic: "homenet/Thermo3/setTemp/state"
+        temperature_command_topic: "homenet/Thermo3/setTemp/command"
+        current_temperature_topic: "homenet/Thermo3/curTemp/state"
+        modes:
+          - "off"
+          - "heat"
+        min_temp: 5
+        max_temp: 28
+
+    - climate:
+        name: "아들방-난방"
+        mode_state_topic: "homenet/Thermo4/power/state"
+        mode_command_topic: "homenet/Thermo4/power/command"
+        temperature_state_topic: "homenet/Thermo4/setTemp/state"
+        temperature_command_topic: "homenet/Thermo4/setTemp/command"
+        current_temperature_topic: "homenet/Thermo4/curTemp/state"
+        modes:
+          - "off"
+          - "heat"
+        min_temp: 5
+        max_temp: 28
+
+
+    - fan:
+        name: "전열교환기"
+        state_topic: "homenet/fan1/speed/state"
+        command_topic: "homenet/fan1/speed/command"
+        preset_mode_state_topic: "homenet/fan1/speed/state"
+        preset_mode_command_topic: "homenet/fan1/speed/command"
+        payload_on: "low"
+        payload_off: "off"
+        preset_modes:
+          - "off"
+          - "low"
+          - "middle"
+          - "high"
+          
+    - device_tracker:
+        name: "현관문"
+        state_topic: "homenet/Door1/open/state"
+        payload_available : "On"
+        payload_not_available: "Off"
+        
+    - device_tracker:
+        name: "가스"
+        state_topic: "homenet/Gas1/open/state"
+        payload_available : "On"
+        payload_not_available : "Off"  
