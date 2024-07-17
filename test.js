@@ -1,4 +1,9 @@
 const net = require('net');
+const fs = require('fs');
+const path = require('path');
+
+// 로그 파일 경로
+const logFilePath = path.join(__dirname, 'logs.txt');
 
 // 설정 객체
 const CONFIG = {
@@ -18,8 +23,12 @@ const PREDEFINED_PACKETS = [
 ];
 
 // 로그 출력 함수
-const log = (...args) => console.log('[' + new Date().toLocaleString('ko-KR', {timeZone: 'Asia/Seoul'}) + ']', args.join(' '));
-
+// 로그 출력 함수
+const log = (...args) => {
+    const logMessage = '[' + new Date().toLocaleString('ko-KR', {timeZone: 'Asia/Seoul'}) + '] ' + args.join(' ') + '\n';
+    console.log(logMessage);
+    fs.appendFileSync(logFilePath, logMessage, 'utf8');
+};
 // 소켓 객체 생성 및 연결
 const sock = new net.Socket();
 log('Initializing: SOCKET');
@@ -70,7 +79,7 @@ function analyzePacket(data) {
             //analyzeThermoPacket(data);
             break;
         case '200171':
-            analyzeFanPacket(data);
+            //analyzeFanPacket(data);
             break;
         default:
             analyzeUnknownPacket(data);

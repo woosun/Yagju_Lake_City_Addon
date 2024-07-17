@@ -1,4 +1,4 @@
-# CVNet Wallpad Controller with RS485 - 수정중 0.1.2
+# CVNet Wallpad Controller with RS485 - 수정중 0.1.4
 
 ![Supports aarch64 Architecture][aarch64-shield] ![Supports amd64 Architecture][amd64-shield] ![Supports armhf Architecture][armhf-shield] ![Supports armv7 Architecture][armv7-shield] ![Supports i386 Architecture][i386-shield]
 
@@ -10,7 +10,15 @@
 
 [네이버 Homeassistant 카페](https://cafe.naver.com/koreassistant)
 
-## Version : 0.1.3
+## Version : 0.1.4
+
+## 수정로그
+0.1 옥제풍 패킷코드 하나씩 분석중
+0.1.1 조명, 난방기 체크완료
+0.1.2 전열교환기 체크중
+0.1.3 전열교환기 체크중v2
+0.1.4 2024.07.17 전열교환기 체크중 - 찾았다.. 상태정보는 처리완료 - 추후 가동코드도 작업예정
+
 
 ## 알고리즘 분석
 

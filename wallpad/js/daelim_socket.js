@@ -63,7 +63,7 @@ const CONST = {
 				{deviceId: 'Door', subId: ['2'], stateStartWithHex: 'f720bb01110405000000000000f6'.buff(), open: 'On'},
 
         //전열교환기
-        {deviceId: 'Fan', subId: ['1'], stateStartWithHex: 'F7 20 01 71 81'.buff() , whereToReadBlock: [5,7], power: '', speed:''},
+        {deviceId: 'Fan', subId: ['1'], stateStartWithHex: 'F7 20 01 71 81'.buff() , whereToReadBlock: [5], power: '', speed:''},
 
         //{deviceId: 'Fan', subId: '1', stateStartWithHex: 'F720017181000100000000000014'.buff(), power: 'ON', speed: 'auto'}, //제어신호는 없음
         //{deviceId: 'Fan', subId: '1', stateStartWithHex: 'F720017181000100000000000014'.buff(), power: 'ON', speed: 'night'}, //제어신호는 없음
@@ -280,11 +280,11 @@ var updateStatus = (obj, data) => {
             } else { //파워
               value = (parseInt(data[obj.whereToReadBlock[i]-1], 10) < 100)?"off":"heat";
             }
-          } else if (obj.deviceId == 'fan') {
+          } else if (obj.deviceId == 'Fan') {
             if (stateName=='power'){
               value = (data[obj.whereToReadBlock[i]] > 0 )?"ON":"Off";
             }else if (stateName=='speed'){ 
-              value = (data[obj.whereToReadBlock[i]] > 3)?"High":(data[obj.whereToReadBlock[i]] > 2)?"Middle":(data[obj.whereToReadBlock[i]] > 1)?"Low":"Off";
+              value = (data[obj.whereToReadBlock[i+1]] > 2)?"High":(data[obj.whereToReadBlock[i+1]] > 1)?"Middle":(data[obj.whereToReadBlock[i+1]] > 0)?"Low":"Off";
             }
           } else {
            //etc..
