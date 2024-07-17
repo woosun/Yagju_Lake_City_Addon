@@ -71,7 +71,7 @@ const CONST = {
         //엘리베이터
         //{deviceId: 'elevator', subId: ['1'], stateStartWithHex: 'F7 20 01 22 81'.buff() , whereToReadBlock: [6], power: ''},
         //가스 안씀
-        //{deviceId: 'Gas', subId: ['1'], stateStartWithHex: 'F7 20 01 22 81'.buff() , whereToReadBlock: [6], power: ''},
+        {deviceId: 'Gas', subId: ['1'], stateStartWithHex: 'f7 20 01 11 81'.buff() , whereToReadBlock: [5], power: ''},
         //{deviceId: 'Gas', subId: ['1'], stateStartWithHex: 'f7 20 01 8b 9f 01000000000000004c'.buff(), open: 'Off'} 
 
     ],
@@ -154,12 +154,12 @@ const CONST = {
         //{deviceId: 'Fan', subId: '1', commandHex: Buffer.alloc(8,'780102030000007E','hex'), ackHex: Buffer.alloc(8,'F804010300000000','hex'), speed: 'high'  }, //강(켜짐)
         //F7207101110101030000000000A8AA F7200171910101030D0000000035AA
         //전열교환기
-        {deviceId: 'fan', subId: '1', power: 'off', speed: 'Low' ,    commandHex: 'F7 20 71 01 11 00 00 00 00 00 00 00 00 A3 AA'.buff(), ackHex: '20017191'.buff()}, //off
-        {deviceId: 'fan', subId: '1', power: 'on', speed: 'Low' ,     commandHex: 'F7 20 71 01 11 01 01 01 00 00 00 00 00 A6 AA'.buff(), ackHex: '20017191'.buff()}, //low
-        {deviceId: 'fan', subId: '1', power: 'on', speed: 'Middle' ,  commandHex: 'F7 20 71 01 11 01 01 02 00 00 00 00 00 A7 AA'.buff(), ackHex: '20017191'.buff()}, //middle
-        {deviceId: 'fan', subId: '1', power: 'on', speed: 'High' ,    commandHex: 'F7 20 71 01 11 01 01 03 00 00 00 00 00 A8 AA'.buff(), ackHex: '20017191'.buff()}, //high
+        {deviceId: 'fan', subId: '1', power: 'off', speed: 'Low' ,    commandHex: 'F7 20 01 71 91 00 01 00 00 00 00 00 00 24 AA'.buff(), ackHex: '20017191'.buff()}, //off
+        {deviceId: 'fan', subId: '1', power: 'on', speed: 'Low' ,     commandHex: 'F7 20 01 71 91 01 01 01 00 00 00 00 00 26 AA'.buff(), ackHex: '20017191'.buff()}, //low
+        {deviceId: 'fan', subId: '1', power: 'on', speed: 'Middle' ,  commandHex: 'F7 20 01 71 91 01 01 02 00 00 00 00 00 27 AA'.buff(), ackHex: '20017191'.buff()}, //middle
+        {deviceId: 'fan', subId: '1', power: 'on', speed: 'High' ,    commandHex: 'F7 20 01 71 91 01 01 03 00 00 00 00 00 28 AA'.buff(), ackHex: '20017191'.buff()}, //high
 
-        {deviceId: 'Gas', subId: '1', commandHex: Buffer.alloc(8,'1101800000000092','hex'), ackHex: Buffer.alloc(8,'9148480000000021','hex'), power: 'OFF' }, //꺼짐
+        {deviceId: 'Gas', subId: '1', power: 'off',    commandHex: 'F7 20 01 11 91 00 00 00 00 00 00 00 00 C3 AA'.buff(), ackHex: '20011191'.buff()}, //high
 
 
     ],
@@ -286,10 +286,11 @@ var updateStatus = (obj, data) => {
             }else if (stateName=='speed'){ 
               value = (data[obj.whereToReadBlock[i]+2] > 2)?"High":(data[obj.whereToReadBlock[i]+2] > 1)?"Middle":(data[obj.whereToReadBlock[i]+2] > 0)?"Low":"Off";
             }
-          } else {
+          } else if (obj.deviceId == 'Gas') {
+            value = (data[obj.whereToReadBlock[i]] > 0 )?"ON":"Off";
+          }else {
            //etc..
            value = obj[stateName];
-
           }
 
           // 상태값이 없거나 상태가 같으면 반영 중지

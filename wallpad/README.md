@@ -1,4 +1,4 @@
-# CVNet Wallpad Controller with RS485 - 수정중 0.1.4
+# CVNet Wallpad Controller with RS485 - 수정중 0.1.6
 
 ![Supports aarch64 Architecture][aarch64-shield] ![Supports amd64 Architecture][amd64-shield] ![Supports armhf Architecture][armhf-shield] ![Supports armv7 Architecture][armv7-shield] ![Supports i386 Architecture][i386-shield]
 
@@ -10,7 +10,7 @@
 
 [네이버 Homeassistant 카페](https://cafe.naver.com/koreassistant)
 
-## Version : 0.1.4
+## Version : 0.1.6
 
 ## 수정로그
 ```
@@ -20,6 +20,7 @@
 0.1.3 전열교환기 체크중v2
 0.1.4 2024.07.17 전열교환기 체크중 - 찾았다.. 상태정보는 처리완료 - 추후 가동코드도 작업예정
 0.1.5 전열교환기 체크중 - 상태정보 - 속도부분 수정
+0.1.6 전열교환기 전송패킷 찾음 ackHex 코드를 찾아야할듯? 가스 상태 패킷도 찾은듯?
 ```
 
 ## 알고리즘 분석

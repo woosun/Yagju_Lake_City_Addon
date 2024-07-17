@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 // 로그 파일 경로
-const logFilePath = path.join(__dirname, 'logs.txt');
+const logFilePath = path.join(__dirname, 'logs_fan.txt');
 
 // 설정 객체
 const CONFIG = {
@@ -21,11 +21,13 @@ const PREDEFINED_PACKETS = [
     'f720014a81151d061b051b0f1d8baa',//난방
     // 추가 패킷...
 ];
-
+//f7 20 01 11 81 01 가스패킷으로 의심됨..
+//F7 20 01 E1 81 02 00 00 00 00 02 31 30 E8 AA << 엘리베이터 콜 패킷이라는데?
+//f7 20 01 81 81 02 00 00 00 00 00 00 00 25 AA << 이것도?
 // 로그 출력 함수
 // 로그 출력 함수
 const log = (...args) => {
-    const logMessage = '[' + new Date().toLocaleString('ko-KR', {timeZone: 'Asia/Seoul'}) + '] ' + args.join(' ') + '\n';
+    const logMessage = '' + args.join(' ') + '\n';
     console.log(logMessage);
     fs.appendFileSync(logFilePath, logMessage, 'utf8');
 };
@@ -79,10 +81,10 @@ function analyzePacket(data) {
             //analyzeThermoPacket(data);
             break;
         case '200171':
-            //analyzeFanPacket(data);
+            analyzeFanPacket(data);
             break;
         default:
-            analyzeUnknownPacket(data);
+            //analyzeUnknownPacket(data);
     }
 }
 
@@ -94,11 +96,13 @@ function analyzeLightPacket(data) {
     log('  Light 2:', data[6] > 0 ? 'ON' : 'OFF');
     log('  Light 3:', data[7] > 0 ? 'ON' : 'OFF');
 }
-
+//팬 패킷
 function analyzeFanPacket(data){
-    log('Fan status:');
-    log('  Status:', data[5] > 0 ? 'ON' : 'OFF');
-    log('  SPEED:', data[7]);
+        log('Fan status:');
+        log('  Status:', data[5] > 0 ? 'ON' : 'OFF');
+        log('  SPEED:', data[7]);
+        const packetDetails = Array.from(data).map(byte => `${byte.toString(16).padStart(2, '0')}`).join(' ');
+        log('packet structure:', packetDetails);
 }
 // 난방 패킷 분석 함수
 function analyzeThermoPacket(data) {
@@ -115,11 +119,9 @@ function analyzeThermoPacket(data) {
 
 // 알 수 없는 패킷 분석 함수
 function analyzeUnknownPacket(data) {
-    if (data[4] === 0x81) {
-        if (data[5] == 0x00){
+    if (data[4] !== 0x81) {
             const packetDetails = Array.from(data).map(byte => `${byte.toString(16).padStart(2, '0')}`).join(' ');
             log('Unknown packet structure:', packetDetails);
-        }
     }
 }
 // 패킷 수신 및 처리
