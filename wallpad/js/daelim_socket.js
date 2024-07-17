@@ -284,7 +284,7 @@ var updateStatus = (obj, data) => {
             if (stateName=='power'){
               value = (data[obj.whereToReadBlock[i]] > 0 )?"ON":"Off";
             }else if (stateName=='speed'){ 
-              value = (data[obj.whereToReadBlock[i+1]] > 2)?"High":(data[obj.whereToReadBlock[i+1]] > 1)?"Middle":(data[obj.whereToReadBlock[i+1]] > 0)?"Low":"Off";
+              value = (data[obj.whereToReadBlock[i]+2] > 2)?"High":(data[obj.whereToReadBlock[i]+2] > 1)?"Middle":(data[obj.whereToReadBlock[i]+2] > 0)?"Low":"Off";
             }
           } else {
            //etc..
