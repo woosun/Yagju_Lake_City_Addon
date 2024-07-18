@@ -17,9 +17,16 @@ const CONFIG = {
 const PREDEFINED_PACKETS = [
     'f7200121810000000000000000c3aa',//조명
     'f7200122810000000000000000c4aa',//조명
-    'F720017181000100000000000014aa',//팬
+    
     'f720014a81151d061b051b0f1d8baa',//난방
     'f7200111810100000000000000b4aa',//가스
+    'F720110111000000000000000043AA', // 가스 끄기
+
+    'F720017181000100000000000014aa',//팬
+    'f7207101110000000000000000a3aa', //끄기
+    'F7207101110101010000000000A6AA', //약풍
+    'f7207101110101020000000000a7aa', //중풍
+    'f7207101110101030000000000a8aa', //강풍
     // 추가 패킷...
 ];
 //F7 20 01 E1 81 02 00 00 00 00 02 31 30 E8 AA << 엘리베이터 콜 패킷이라는데?
@@ -87,13 +94,15 @@ function analyzePacket(data) {
             //analyzeThermoPacket(data);            
             break;
         case '200111': //가스
+            analyzePacket1(data,"gas");
             break;
         case '200171': //공조기
+        case '207101110': //공조기 실행명령어
             //analyzeFanPacket(data);
             break;
         
         default:
-            analyzeUnknownPacket(data);
+            analyzePacket1(data,"Unknown");
     }
 }
 
@@ -106,12 +115,21 @@ function analyzeLightPacket(data) {
     log('  Light 3:', data[7] > 0 ? 'ON' : 'OFF');
 }
 //팬 패킷
+function analyzePacket1(data,type){
+    //console.log(type)
+    const packetDetails = Array.from(data).map(byte => `${byte.toString(16).padStart(2, '0')}`).join(' ');
+    log('type:',type,'structure:', packetDetails);
+}
 function analyzeFanPacket(data){
-        log('Fan status:');
-        log('  Status:', data[5] > 0 ? 'ON' : 'OFF');
-        log('  SPEED:', data[7]);
+        // log('Fan status:');
+        // log('  Status:', data[5] > 0 ? 'ON' : 'OFF');
+        // log('  SPEED:', data[7]);
         const packetDetails = Array.from(data).map(byte => `${byte.toString(16).padStart(2, '0')}`).join(' ');
         log('packet structure:', packetDetails);
+        //f7 20 71 01 11 00 00 00 00 00 00 00 00 a3 aa 끄기
+        //F7 20 71 01 11 01 01 01 00 00 00 00 00 A6 AA 약풍
+        //f7 20 71 01 11 01 01 02 00 00 00 00 00 a7 aa 중풍
+        //f7 20 71 01 11 01 01 03 00 00 00 00 00 a8 aa 강풍
 }
 // 난방 패킷 분석 함수
 function analyzeThermoPacket(data) {
@@ -129,10 +147,8 @@ function analyzeThermoPacket(data) {
 // 알 수 없는 패킷 분석 함수
 function analyzeUnknownPacket(data) {
     const packetHex = data.toString('hex');
-    if (data[4] === 0x81 && !isPacketLogged(packetHex)) {
         const packetDetails = Array.from(data).map(byte => `${byte.toString(16).padStart(2, '0')}`).join(' ');
         log('Unknown packet structure:', packetDetails);
-    }
 }
 
 // 패킷 수신 및 처리

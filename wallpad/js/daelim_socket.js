@@ -97,23 +97,6 @@ const CONST = {
         {deviceId: 'Light', subId: '3', power: 'OFF' , commandHex: 'F7 20 21 01 13 00 00 00 00 00 00 00 00 55 AA'.buff(), ackHex: '2001219f'.buff()}, //off
         {deviceId: 'Light', subId: '3', power: 'ON' , commandHex: 'F7 20 21 01 13 01 00 00 00 00 00 00 00 56 AA'.buff(), ackHex: '2001219f'.buff()}, //on
 
-        //안방등
-        // {deviceId: 'Light', subId: '4', power: 'OFF' , commandHex: 'F7 20 22 01 11 00 00 00 00 00 00 00 00 54 AA'.buff(), ackHex: '2001229f'.buff()}, //off
-        // {deviceId: 'Light', subId: '4', power: 'ON' , commandHex: 'F7 20 22 01 11 01 00 00 00 00 00 00 00 55 AA'.buff(), ackHex: '2001229f'.buff()}, //on
-
-        //게임방2
-        // {deviceId: 'Light', subId: '5', power: 'OFF' , commandHex: 'F7 20 22 01 12 00 00 00 00 00 00 00 00 55 AA'.buff(), ackHex: '2001229f'.buff()}, //off
-        // {deviceId: 'Light', subId: '5', power: 'ON' , commandHex: 'F7 20 22 01 12 01 00 00 00 00 00 00 00 56 AA'.buff(), ackHex: '2001229f'.buff()}, //on
-
-        //침실
-        // {deviceId: 'Light', subId: '6', power: 'OFF' , commandHex: 'F7 20 23 01 11 00 00 00 00 00 00 00 00 55 AA'.buff(), ackHex: '2001239f'.buff()}, //off
-        // {deviceId: 'Light', subId: '6', power: 'ON' , commandHex: 'F7 20 23 01 11 01 00 00 00 00 00 00 00 56 AA'.buff(), ackHex: '2001239f'.buff()}, //on
-
-        //아이방
-        // {deviceId: 'Light', subId: '7', power: 'OFF' , commandHex: 'F7 20 24 01 11 00 00 00 00 00 00 00 00 56 AA'.buff(), ackHex: '2001249f'.buff()}, //off
-        // {deviceId: 'Light', subId: '7', power: 'ON' , commandHex: 'F7 20 24 01 11 01 00 00 00 00 00 00 00 57 AA'.buff(), ackHex: '2001249f'.buff()}, //on
-
-
 
         //////////////////// 난방
 
@@ -150,12 +133,14 @@ const CONST = {
         {deviceId: 'Thermo', subId: '6', setTemp: '',                commandHex: 'F7 20 46 01 11'.buff(), ackHex: '20014691'.buff()},
 
         //전열교환기
-        {deviceId: 'fan', subId: '1', power: 'off', speed: 'Low' ,    commandHex: 'F7 20 01 71 91 00 01 00 00 00 00 00 00 24 AA'.buff(), ackHex: '20017191'.buff()}, //off
-        {deviceId: 'fan', subId: '1', power: 'on', speed: 'Low' ,     commandHex: 'F7 20 01 71 91 01 01 01 00 00 00 00 00 26 AA'.buff(), ackHex: '20017191'.buff()}, //low
-        {deviceId: 'fan', subId: '1', power: 'on', speed: 'Middle' ,  commandHex: 'F7 20 01 71 91 01 01 02 00 00 00 00 00 27 AA'.buff(), ackHex: '20017191'.buff()}, //middle
-        {deviceId: 'fan', subId: '1', power: 'on', speed: 'High' ,    commandHex: 'F7 20 01 71 91 01 01 03 00 00 00 00 00 28 AA'.buff(), ackHex: '20017191'.buff()}, //high
+        {deviceId: 'fan', subId: '1', power: 'off', speed: 'Low' ,    commandHex: 'F7 20 71 01 11 00 00 00 00 00 00 00 00 A3 AA'.buff(), ackHex: '20017191'.buff()}, //off
+        {deviceId: 'fan', subId: '1', power: 'on', speed: 'Low' ,     commandHex: 'F7 20 71 01 11 01 01 01 00 00 00 00 00 A6 AA'.buff(), ackHex: '20017191'.buff()}, //low
+        {deviceId: 'fan', subId: '1', power: 'on', speed: 'Middle' ,  commandHex: 'F7 20 71 01 11 01 01 02 00 00 00 00 00 A7 AA'.buff(), ackHex: '20017191'.buff()}, //middle
+        {deviceId: 'fan', subId: '1', power: 'on', speed: 'High' ,    commandHex: 'F7 20 71 01 11 01 01 03 00 00 00 00 00 A8 AA'.buff(), ackHex: '20017191'.buff()}, //high
 
-        {deviceId: 'Gas', subId: '1', power: 'off',    commandHex: 'F7 20 01 11 91 00 00 00 00 00 00 00 00 C3 AA'.buff(), ackHex: '20011191'.buff()}, //high
+
+        //가스
+        {deviceId: 'Gas', subId: '1', power: 'off',    commandHex: 'F7 20 11 01 11 00 00 00 00 00 00 00 00 43 AA'.buff(), ackHex: '20011191'.buff()}, //가스 끄기
 
 
     ],
