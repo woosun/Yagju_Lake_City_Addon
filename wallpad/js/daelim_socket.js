@@ -140,7 +140,7 @@ const CONST = {
 
 
         //가스
-        {deviceId: 'Gas', subId: '1', power: 'off',    commandHex: 'F7 20 11 01 11 00 00 00 00 00 00 00 00 43 AA'.buff(), ackHex: '20011191'.buff()}, //가스 끄기
+        {deviceId: 'Gas', subId: '1', power: 'OFF',    commandHex: 'F7 20 11 01 11 00 00 00 00 00 00 00 00 43 AA'.buff(), ackHex: '20011191'.buff()}, //가스 끄기
 
 
     ],
