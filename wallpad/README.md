@@ -1,4 +1,4 @@
-# CVNet Wallpad Controller with RS485 - 수정중 0.1.8
+# CVNet Wallpad Controller with RS485 - 수정중 0.1.9
 
 ![Supports aarch64 Architecture][aarch64-shield] ![Supports amd64 Architecture][amd64-shield] ![Supports armhf Architecture][armhf-shield] ![Supports armv7 Architecture][armv7-shield] ![Supports i386 Architecture][i386-shield]
 
@@ -10,7 +10,7 @@
 
 [네이버 Homeassistant 카페](https://cafe.naver.com/koreassistant)
 
-## Version : 0.1.8
+## Version : 0.1.9
 
 ## 수정로그
 ```
@@ -23,6 +23,7 @@
 0.1.6 전열교환기 전송패킷 찾음 ackHex 코드를 찾아야할듯? 가스 상태 패킷도 찾은듯?
 0.1.7 난방두개 더찾음.. 드레스룸, 알파룸 작동명령어는 못찾음
 0.1.8 난방두개 작동명령어 등록 및 팬 작동명령어 등록 가스 차단 작동명령어 등록
+0.1.9 명령 커맨드 수정
 ```
 
 ## 알고리즘 분석

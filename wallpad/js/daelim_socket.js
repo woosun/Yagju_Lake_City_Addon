@@ -65,11 +65,11 @@ const CONST = {
         //엘리베이터
         //{deviceId: 'elevator', subId: ['1'], stateStartWithHex: 'F7 20 01 22 81'.buff() , whereToReadBlock: [6], power: ''},
 				//현관문
-				{deviceId: 'Door', subId: ['1'], stateStartWithHex: 'f720bb01110404000000000000f5'.buff(), open: 'On'},
-				{deviceId: 'Door', subId: ['1'], stateStartWithHex: 'f720bb01110403000000000000f4'.buff(), open: 'Off'},
+				{deviceId: 'Door', subId: ['1'], stateStartWithHex: 'f720bb01110404000000000000f5'.buff(), open: 'on'},
+				{deviceId: 'Door', subId: ['1'], stateStartWithHex: 'f720bb01110403000000000000f4'.buff(), open: 'off'},
 				
 				//공동현관문
-				{deviceId: 'Door', subId: ['2'], stateStartWithHex: 'f720bb01110405000000000000f6'.buff(), open: 'On'},
+				{deviceId: 'Door', subId: ['2'], stateStartWithHex: 'f720bb01110405000000000000f6'.buff(), open: 'on'},
 
 
     ],
@@ -133,10 +133,10 @@ const CONST = {
         {deviceId: 'Thermo', subId: '6', setTemp: '',                commandHex: 'F7 20 46 01 11'.buff(), ackHex: '20014691'.buff()},
 
         //전열교환기
-        {deviceId: 'fan', subId: '1', power: 'off', speed: 'Low' ,    commandHex: 'F7 20 71 01 11 00 00 00 00 00 00 00 00 A3 AA'.buff(), ackHex: '20017191'.buff()}, //off
-        {deviceId: 'fan', subId: '1', power: 'on', speed: 'Low' ,     commandHex: 'F7 20 71 01 11 01 01 01 00 00 00 00 00 A6 AA'.buff(), ackHex: '20017191'.buff()}, //low
-        {deviceId: 'fan', subId: '1', power: 'on', speed: 'Middle' ,  commandHex: 'F7 20 71 01 11 01 01 02 00 00 00 00 00 A7 AA'.buff(), ackHex: '20017191'.buff()}, //middle
-        {deviceId: 'fan', subId: '1', power: 'on', speed: 'High' ,    commandHex: 'F7 20 71 01 11 01 01 03 00 00 00 00 00 A8 AA'.buff(), ackHex: '20017191'.buff()}, //high
+        {deviceId: 'fan', subId: '1', power: 'off',    commandHex: 'F7 20 71 01 11 00 00 00 00 00 00 00 00 A3 AA'.buff(), ackHex: '20017191'.buff()}, //off
+        {deviceId: 'fan', subId: '1', speed: 'Low' ,     commandHex: 'F7 20 71 01 11 01 01 01 00 00 00 00 00 A6 AA'.buff(), ackHex: '20017191'.buff()}, //low
+        {deviceId: 'fan', subId: '1', speed: 'Middle' ,  commandHex: 'F7 20 71 01 11 01 01 02 00 00 00 00 00 A7 AA'.buff(), ackHex: '20017191'.buff()}, //middle
+        {deviceId: 'fan', subId: '1', speed: 'High' ,    commandHex: 'F7 20 71 01 11 01 01 03 00 00 00 00 00 A8 AA'.buff(), ackHex: '20017191'.buff()}, //high
 
 
         //가스
