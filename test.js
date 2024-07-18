@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 // 로그 파일 경로
-const logFilePath = path.join(__dirname, 'logs_fan.txt');
+const logFilePath = path.join(__dirname, 'logs.txt');
 
 // 설정 객체
 const CONFIG = {
@@ -19,18 +19,24 @@ const PREDEFINED_PACKETS = [
     'f7200122810000000000000000c4aa',//조명
     'F720017181000100000000000014aa',//팬
     'f720014a81151d061b051b0f1d8baa',//난방
+    'f7200111810100000000000000b4aa',//가스
     // 추가 패킷...
 ];
-//f7 20 01 11 81 01 가스패킷으로 의심됨..
 //F7 20 01 E1 81 02 00 00 00 00 02 31 30 E8 AA << 엘리베이터 콜 패킷이라는데?
 //f7 20 01 81 81 02 00 00 00 00 00 00 00 25 AA << 이것도?
-// 로그 출력 함수
 // 로그 출력 함수
 const log = (...args) => {
     const logMessage = '' + args.join(' ') + '\n';
     console.log(logMessage);
     fs.appendFileSync(logFilePath, logMessage, 'utf8');
 };
+
+// 중복 패킷 확인 함수
+const isPacketLogged = (packetHex) => {
+    const logs = fs.readFileSync(logFilePath, 'utf8');
+    return logs.split('\n').some(line => line.includes(packetHex));
+};
+
 // 소켓 객체 생성 및 연결
 const sock = new net.Socket();
 log('Initializing: SOCKET');
@@ -78,13 +84,16 @@ function analyzePacket(data) {
             break;
         case '20014a':
         case '20014b':
-            //analyzeThermoPacket(data);
+            //analyzeThermoPacket(data);            
             break;
-        case '200171':
-            analyzeFanPacket(data);
+        case '200111': //가스
             break;
+        case '200171': //공조기
+            //analyzeFanPacket(data);
+            break;
+        
         default:
-            //analyzeUnknownPacket(data);
+            analyzeUnknownPacket(data);
     }
 }
 
@@ -119,11 +128,13 @@ function analyzeThermoPacket(data) {
 
 // 알 수 없는 패킷 분석 함수
 function analyzeUnknownPacket(data) {
-    if (data[4] !== 0x81) {
-            const packetDetails = Array.from(data).map(byte => `${byte.toString(16).padStart(2, '0')}`).join(' ');
-            log('Unknown packet structure:', packetDetails);
+    const packetHex = data.toString('hex');
+    if (data[4] === 0x81 && !isPacketLogged(packetHex)) {
+        const packetDetails = Array.from(data).map(byte => `${byte.toString(16).padStart(2, '0')}`).join(' ');
+        log('Unknown packet structure:', packetDetails);
     }
 }
+
 // 패킷 수신 및 처리
 let buffer = Buffer.alloc(0);
 let lastReceive = new Date().getTime();
