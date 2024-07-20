@@ -66,7 +66,7 @@
           - "heat"
         min_temp: 5
         max_temp: 28
-
+        
     - climate:
         name: "드레스룸-난방"
         mode_state_topic: "homenet/Thermo5/power/state"
@@ -100,12 +100,14 @@
         preset_mode_state_topic: "homenet/Fan1/speed/state"
         preset_mode_command_topic: "homenet/Fan1/speed/command"
         payload_on: "ON"
-        payload_off: "Off"
+        payload_off: "OFF"
         preset_modes:
-          - "Off"
           - "Low"
           - "Middle"
           - "High"
-    - sensor:
+    - switch:
         name: "가스차단기-차단전용"
         state_topic: "homenet/Gas1/power/state"
+        command_topic: "homenet/Gas1/power/command"
+        state_on: "ON"
+        state_off: "OFF"
