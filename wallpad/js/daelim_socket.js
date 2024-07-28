@@ -79,7 +79,7 @@ const CONST = {
         ////////////////// 전등
 
         //거실등1
-        {deviceId: 'Light', subId: '1', power: 'OFF',  brightness: '0' , commandHex: 'F7 20 21 01 11 00 00 00 00 00 00 00 00 53 AA'.buff(), ackHex: '2001219f'.buff()}, //off
+        {deviceId: 'Light', subId: '1', power: 'OFF',  brightness: '0' , commandHex: 'F7 20 21 01 11 00 00 00 00 00 00 00 00 53 AA'.buff(), ackHex: '2001219f'.buff()}, //OFF
         {deviceId: 'Light', subId: '1', power: 'ON' ,  brightness: '1' , commandHex: 'F7 20 21 01 11 01 00 00 00 00 00 00 00 54 AA'.buff(), ackHex: '2001219f'.buff()},
         {deviceId: 'Light', subId: '1', power: 'ON' ,  brightness: '2' , commandHex: 'F7 20 21 01 11 02 00 00 00 00 00 00 00 55 AA'.buff(), ackHex: '2001219f'.buff()},
         {deviceId: 'Light', subId: '1', power: 'ON' ,  brightness: '3' , commandHex: 'F7 20 21 01 11 03 00 00 00 00 00 00 00 56 AA'.buff(), ackHex: '2001219f'.buff()},
@@ -90,11 +90,11 @@ const CONST = {
         {deviceId: 'Light', subId: '1', power: 'ON' ,  brightness: '8' , commandHex: 'F7 20 21 01 11 0A 00 00 00 00 00 00 00 5D AA'.buff(), ackHex: '2001219f'.buff()},
 
         //거실등2
-        {deviceId: 'Light', subId: '2', power: 'OFF' , commandHex: 'F7 20 21 01 12 00 00 00 00 00 00 00 00 54 AA'.buff(), ackHex: '2001219f'.buff()}, //off
+        {deviceId: 'Light', subId: '2', power: 'OFF' , commandHex: 'F7 20 21 01 12 00 00 00 00 00 00 00 00 54 AA'.buff(), ackHex: '2001219f'.buff()}, //OFF
         {deviceId: 'Light', subId: '2', power: 'ON' , commandHex: 'F7 20 21 01 12 01 00 00 00 00 00 00 00 55 AA'.buff(), ackHex: '2001219f'.buff()}, //on
 
         //복도등
-        {deviceId: 'Light', subId: '3', power: 'OFF' , commandHex: 'F7 20 21 01 13 00 00 00 00 00 00 00 00 55 AA'.buff(), ackHex: '2001219f'.buff()}, //off
+        {deviceId: 'Light', subId: '3', power: 'OFF' , commandHex: 'F7 20 21 01 13 00 00 00 00 00 00 00 00 55 AA'.buff(), ackHex: '2001219f'.buff()}, //OFF
         {deviceId: 'Light', subId: '3', power: 'ON' , commandHex: 'F7 20 21 01 13 01 00 00 00 00 00 00 00 56 AA'.buff(), ackHex: '2001219f'.buff()}, //on
 
 
@@ -105,35 +105,36 @@ const CONST = {
         //F7 20 44 01 11 ## 00 00 00 00 00 00 00 @@ AA (총 15블럭, ## 희망온도, @@ 패리티)
 
         //거실-난방
-        {deviceId: 'Thermo', subId: '1', setTemp: '0', power: 'off', commandHex: 'F7 20 41 01 11 0e 00 00 00 00 00 00 00 81 AA'.buff() , ackHex: '20014191'.buff()}, //off
+        {deviceId: 'Thermo', subId: '1', setTemp: '0', power: 'OFF', commandHex: 'F7 20 41 01 11 0e 00 00 00 00 00 00 00 81 AA'.buff() , ackHex: '20014191'.buff()}, //OFF
         {deviceId: 'Thermo', subId: '1', power: 'heat',              commandHex: 'F7 20 41 01 11 8e 00 00 00 00 00 00 00 01 AA'.buff() , ackHex: '20014191'.buff()}, //heat
         {deviceId: 'Thermo', subId: '1', setTemp: '',                commandHex: 'F7 20 41 01 11'.buff(), ackHex: '20014191'.buff()},
 
         //안방-난방
-        {deviceId: 'Thermo', subId: '2', setTemp: '0', power: 'off', commandHex: 'F7 20 42 01 11 0e 00 00 00 00 00 00 00 82 AA'.buff() , ackHex: '20014291'.buff()}, //off
+        {deviceId: 'Thermo', subId: '2', setTemp: '0', power: 'OFF', commandHex: 'F7 20 42 01 11 0e 00 00 00 00 00 00 00 82 AA'.buff() , ackHex: '20014291'.buff()}, //OFF
         {deviceId: 'Thermo', subId: '2', power: 'heat',              commandHex: 'F7 20 42 01 11 8e 00 00 00 00 00 00 00 02 AA'.buff() , ackHex: '20014291'.buff()}, //heat
         {deviceId: 'Thermo', subId: '2', setTemp: '',                commandHex: 'F7 20 42 01 11'.buff(), ackHex: '20014291'.buff()},
 
         //아부지방-난방
-        {deviceId: 'Thermo', subId: '3', setTemp: '0', power: 'off', commandHex: 'F7 20 43 01 11 0e 00 00 00 00 00 00 00 83 AA'.buff() , ackHex: '20014391'.buff()}, //off
+        {deviceId: 'Thermo', subId: '3', setTemp: '0', power: 'OFF', commandHex: 'F7 20 43 01 11 0e 00 00 00 00 00 00 00 83 AA'.buff() , ackHex: '20014391'.buff()}, //OFF
         {deviceId: 'Thermo', subId: '3', power: 'heat',              commandHex: 'F7 20 43 01 11 8e 00 00 00 00 00 00 00 03 AA'.buff() , ackHex: '20014391'.buff()}, //heat
         {deviceId: 'Thermo', subId: '3', setTemp: '',                commandHex: 'F7 20 43 01 11'.buff(), ackHex: '20014391'.buff()},
 
         //아들방-난방
-        {deviceId: 'Thermo', subId: '4', setTemp: '0', power: 'off', commandHex: 'F7 20 44 01 11 0e 00 00 00 00 00 00 00 84 AA'.buff() , ackHex: '20014491'.buff()}, //off
+        {deviceId: 'Thermo', subId: '4', setTemp: '0', power: 'OFF', commandHex: 'F7 20 44 01 11 0e 00 00 00 00 00 00 00 84 AA'.buff() , ackHex: '20014491'.buff()}, //OFF
         {deviceId: 'Thermo', subId: '4', power: 'heat',              commandHex: 'F7 20 44 01 11 8e 00 00 00 00 00 00 00 04 AA'.buff() , ackHex: '20014491'.buff()}, //heat
         {deviceId: 'Thermo', subId: '4', setTemp: '',                commandHex: 'F7 20 44 01 11'.buff(), ackHex: '20014491'.buff()},
 
-        {deviceId: 'Thermo', subId: '5', setTemp: '0', power: 'off', commandHex: 'F7 20 45 01 11 0e 00 00 00 00 00 00 00 85 AA'.buff() , ackHex: '20014591'.buff()}, //off
+        {deviceId: 'Thermo', subId: '5', setTemp: '0', power: 'OFF', commandHex: 'F7 20 45 01 11 0e 00 00 00 00 00 00 00 85 AA'.buff() , ackHex: '20014591'.buff()}, //OFF
         {deviceId: 'Thermo', subId: '5', power: 'heat',              commandHex: 'F7 20 45 01 11 8e 00 00 00 00 00 00 00 05 AA'.buff() , ackHex: '20014591'.buff()}, //heat
         {deviceId: 'Thermo', subId: '5', setTemp: '',                commandHex: 'F7 20 45 01 11'.buff(), ackHex: '20014591'.buff()},
 
-        {deviceId: 'Thermo', subId: '6', setTemp: '0', power: 'off', commandHex: 'F7 20 46 01 11 0e 00 00 00 00 00 00 00 86 AA'.buff() , ackHex: '20014691'.buff()}, //off
+        {deviceId: 'Thermo', subId: '6', setTemp: '0', power: 'OFF', commandHex: 'F7 20 46 01 11 0e 00 00 00 00 00 00 00 86 AA'.buff() , ackHex: '20014691'.buff()}, //OFF
         {deviceId: 'Thermo', subId: '6', power: 'heat',              commandHex: 'F7 20 46 01 11 8e 00 00 00 00 00 00 00 06 AA'.buff() , ackHex: '20014691'.buff()}, //heat
         {deviceId: 'Thermo', subId: '6', setTemp: '',                commandHex: 'F7 20 46 01 11'.buff(), ackHex: '20014691'.buff()},
 
         //전열교환기
-        {deviceId: 'Fan', subId: '1', power: 'OFF',    commandHex: 'F7 20 71 01 11 00 00 00 00 00 00 00 00 A3 AA'.buff(), ackHex: '20017191'.buff()}, //off
+        {deviceId: 'Fan', subId: '1', power: 'OFF',    commandHex: 'F7 20 71 01 11 00 00 00 00 00 00 00 00 A3 AA'.buff(), ackHex: '20017191'.buff()}, //OFF
+        {deviceId: 'Fan', subId: '1', power: 'ON',    commandHex: 'F7 20 71 01 11 01 01 01 00 00 00 00 00 A6 AA'.buff(), ackHex: '20017191'.buff()}, //ON
         {deviceId: 'Fan', subId: '1', speed: 'Low' ,     commandHex: 'F7 20 71 01 11 01 01 01 00 00 00 00 00 A6 AA'.buff(), ackHex: '20017191'.buff()}, //low
         {deviceId: 'Fan', subId: '1', speed: 'Middle' ,  commandHex: 'F7 20 71 01 11 01 01 02 00 00 00 00 00 A7 AA'.buff(), ackHex: '20017191'.buff()}, //middle
         {deviceId: 'Fan', subId: '1', speed: 'High' ,    commandHex: 'F7 20 71 01 11 01 01 03 00 00 00 00 00 A8 AA'.buff(), ackHex: '20017191'.buff()}, //high
@@ -259,16 +260,16 @@ var updateStatus = (obj, data) => {
             } else if (stateName=='setTemp'){ //난방조절기의 설정 값인 경우, 128을 빼야함
               value = thermoValue(data[obj.whereToReadBlock[i]-1]);
             } else { //파워
-              value = (parseInt(data[obj.whereToReadBlock[i]-1], 10) < 100)?"off":"heat";
+              value = (parseInt(data[obj.whereToReadBlock[i]-1], 10) < 100)?"OFF":"heat";
             }
           } else if (obj.deviceId == 'Fan') {
             if (stateName=='power'){
-              value = (data[obj.whereToReadBlock[i]] > 0 )?"ON":"Off";
+              value = (data[obj.whereToReadBlock[i]] > 0 )?"ON":"OFF";
             }else if (stateName=='speed'){ 
-              value = (data[obj.whereToReadBlock[i]+2] > 2)?"High":(data[obj.whereToReadBlock[i]+2] > 1)?"Middle":(data[obj.whereToReadBlock[i]+2] > 0)?"Low":"Off";
+              value = (data[obj.whereToReadBlock[i]+2] > 2)?"High":(data[obj.whereToReadBlock[i]+2] > 1)?"Middle":(data[obj.whereToReadBlock[i]+2] > 0)?"Low":"OFF";
             }
           } else if (obj.deviceId == 'Gas') {
-            value = (data[obj.whereToReadBlock[i]] > 0 )?"ON":"Off";
+            value = (data[obj.whereToReadBlock[i]] > 0 )?"ON":"OFF";
           }else {
            //etc..
            value = obj[stateName];

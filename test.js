@@ -114,16 +114,21 @@ function analyzeLightPacket(data) {
     log('  Light 2:', data[6] > 0 ? 'ON' : 'OFF');
     log('  Light 3:', data[7] > 0 ? 'ON' : 'OFF');
 }
-//팬 패킷
 function analyzePacket1(data,type){
     const packetHex = data.toString('hex');
     const packetDetails = Array.from(data).map(byte => `${byte.toString(16).padStart(2, '0')}`).join(' ');
     if (data[4] === 0x81) {
-        log('type:',type,'statys:','81:', packetDetails);
+        //if (!isPacketLogged(packetDetails)) {  // 중복 로그 확인 (packetHex 대신 packetDetails 사용)
+            log('type:',type,'statys:','81:', packetDetails);
+        //}
     }else if (data[4] === 0x91) {
-        log('type:',type,'statys:','91:', packetDetails);
+        if (!isPacketLogged(packetDetails)) {  // 중복 로그 확인 (packetHex 대신 packetDetails 사용)
+            log('type:',type,'statys:','91:', packetDetails);
+        }
     }else{
-        log('type:',type,'statys:','Unknown:', packetDetails);
+        if (!isPacketLogged(packetDetails)) {  // 중복 로그 확인 (packetHex 대신 packetDetails 사용)
+            log('type:',type,'statys:','Unknown:', packetDetails);
+        }
     }
 }
 //팬 패킷

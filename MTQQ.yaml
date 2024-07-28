@@ -23,7 +23,7 @@
         temperature_command_topic: "homenet/Thermo1/setTemp/command"
         current_temperature_topic: "homenet/Thermo1/curTemp/state"
         modes:
-          - "off"
+          - "OFF"
           - "heat"
         min_temp: 5
         max_temp: 28
@@ -36,7 +36,7 @@
         temperature_command_topic: "homenet/Thermo2/setTemp/command"
         current_temperature_topic: "homenet/Thermo2/curTemp/state"
         modes:
-          - "off"
+          - "OFF"
           - "heat"
         min_temp: 5
         max_temp: 28
@@ -49,7 +49,7 @@
         temperature_command_topic: "homenet/Thermo3/setTemp/command"
         current_temperature_topic: "homenet/Thermo3/curTemp/state"
         modes:
-          - "off"
+          - "OFF"
           - "heat"
         min_temp: 5
         max_temp: 28
@@ -62,7 +62,7 @@
         temperature_command_topic: "homenet/Thermo4/setTemp/command"
         current_temperature_topic: "homenet/Thermo4/curTemp/state"
         modes:
-          - "off"
+          - "OFF"
           - "heat"
         min_temp: 5
         max_temp: 28
@@ -75,7 +75,7 @@
         temperature_command_topic: "homenet/Thermo5/setTemp/command"
         current_temperature_topic: "homenet/Thermo5/curTemp/state"
         modes:
-          - "off"
+          - "OFF"
           - "heat"
         min_temp: 5
         max_temp: 28
@@ -88,7 +88,7 @@
         temperature_command_topic: "homenet/Thermo6/setTemp/command"
         current_temperature_topic: "homenet/Thermo6/curTemp/state"
         modes:
-          - "off"
+          - "OFF"
           - "heat"
         min_temp: 5
         max_temp: 28
