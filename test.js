@@ -95,11 +95,19 @@ function analyzePacket(data) {
             //analyzeThermoPacket(data);            
             break;
         case '200111': //가스
-            analyzePacket1(data,"gas");
+            //analyzePacket1(data,"gas");
             break;
         case '200171': //공조기
         case '207101110': //공조기 실행명령어
             //analyzeFanPacket(data);
+            break;
+        case '2001e1':
+            analyzePacket1(data,"ELV");
+            break;
+        case '2001c1':
+        case '2001c2':
+            //analyzePacket1(data,"콘센트");
+            //콘센트같으므로 재껴
             break;
         default:
             analyzePacket1(data,"Unknown");
@@ -118,16 +126,16 @@ function analyzePacket1(data,type){
     const packetHex = data.toString('hex');
     const packetDetails = Array.from(data).map(byte => `${byte.toString(16).padStart(2, '0')}`).join(' ');
     if (data[4] === 0x81) {
-        //if (!isPacketLogged(packetDetails)) {  // 중복 로그 확인 (packetHex 대신 packetDetails 사용)
-            log('type:',type,'statys:','81:', packetDetails);
+        //if (!isPacketLogged(packetDetails)) {
+            log('type:',type,'status:','81:', packetDetails);
         //}
     }else if (data[4] === 0x91) {
-        if (!isPacketLogged(packetDetails)) {  // 중복 로그 확인 (packetHex 대신 packetDetails 사용)
-            log('type:',type,'statys:','91:', packetDetails);
+        if (!isPacketLogged(packetDetails)) { 
+            log('type:',type,'status:','91:', packetDetails);
         }
     }else{
-        if (!isPacketLogged(packetDetails)) {  // 중복 로그 확인 (packetHex 대신 packetDetails 사용)
-            log('type:',type,'statys:','Unknown:', packetDetails);
+        if (!isPacketLogged(packetDetails)) { 
+            log('type:',type,'status:','Unknown:', packetDetails);
         }
     }
 }

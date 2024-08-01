@@ -23,7 +23,7 @@
         temperature_command_topic: "homenet/Thermo1/setTemp/command"
         current_temperature_topic: "homenet/Thermo1/curTemp/state"
         modes:
-          - "OFF"
+          - "off"
           - "heat"
         min_temp: 5
         max_temp: 28
@@ -36,7 +36,7 @@
         temperature_command_topic: "homenet/Thermo2/setTemp/command"
         current_temperature_topic: "homenet/Thermo2/curTemp/state"
         modes:
-          - "OFF"
+          - "off"
           - "heat"
         min_temp: 5
         max_temp: 28
@@ -49,7 +49,7 @@
         temperature_command_topic: "homenet/Thermo3/setTemp/command"
         current_temperature_topic: "homenet/Thermo3/curTemp/state"
         modes:
-          - "OFF"
+          - "off"
           - "heat"
         min_temp: 5
         max_temp: 28
@@ -62,7 +62,7 @@
         temperature_command_topic: "homenet/Thermo4/setTemp/command"
         current_temperature_topic: "homenet/Thermo4/curTemp/state"
         modes:
-          - "OFF"
+          - "off"
           - "heat"
         min_temp: 5
         max_temp: 28
@@ -75,7 +75,7 @@
         temperature_command_topic: "homenet/Thermo5/setTemp/command"
         current_temperature_topic: "homenet/Thermo5/curTemp/state"
         modes:
-          - "OFF"
+          - "off"
           - "heat"
         min_temp: 5
         max_temp: 28
@@ -88,7 +88,7 @@
         temperature_command_topic: "homenet/Thermo6/setTemp/command"
         current_temperature_topic: "homenet/Thermo6/curTemp/state"
         modes:
-          - "OFF"
+          - "off"
           - "heat"
         min_temp: 5
         max_temp: 28
@@ -100,7 +100,7 @@
         preset_mode_state_topic: "homenet/Fan1/speed/state"
         preset_mode_command_topic: "homenet/Fan1/speed/command"
         payload_on: "ON"
-        payload_off: "OFF"
+        payload_off: "off"
         preset_modes:
           - "Low"
           - "Middle"
@@ -110,4 +110,4 @@
         state_topic: "homenet/Gas1/power/state"
         command_topic: "homenet/Gas1/power/command"
         state_on: "ON"
-        state_off: "OFF"
+        state_off: "off"
