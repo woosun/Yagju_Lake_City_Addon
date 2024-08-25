@@ -8,7 +8,7 @@
  * @대림이편한세상 용으로 수정 : 모근원
  * @수정일 2019-06-26
  * @옥제풍 용으로 수정 : 박우선
- * @수정일 2024-07-15
+ * @수정일 2024-08-25
  */
 
 const util = require('util');
@@ -79,24 +79,27 @@ const CONST = {
         ////////////////// 전등
 
         //거실등1
-        {deviceId: 'Light', subId: '1', power: 'off',  brightness: '0' , commandHex: 'F7 20 21 01 11 00 00 00 00 00 00 00 00 53 AA'.buff(), ackHex: '2001219f'.buff()}, //off
+        {deviceId: 'Light', subId: '1', power: 'OFF',  brightness: '0' , commandHex: 'F7 20 21 01 11 00 00 00 00 00 00 00 00 53 AA'.buff(), ackHex: '2001219f'.buff()}, //off
         {deviceId: 'Light', subId: '1', power: 'ON' ,  brightness: '1' , commandHex: 'F7 20 21 01 11 01 00 00 00 00 00 00 00 54 AA'.buff(), ackHex: '2001219f'.buff()},
-        {deviceId: 'Light', subId: '1', power: 'ON' ,  brightness: '2' , commandHex: 'F7 20 21 01 11 02 00 00 00 00 00 00 00 55 AA'.buff(), ackHex: '2001219f'.buff()},
-        {deviceId: 'Light', subId: '1', power: 'ON' ,  brightness: '3' , commandHex: 'F7 20 21 01 11 03 00 00 00 00 00 00 00 56 AA'.buff(), ackHex: '2001219f'.buff()},
-        {deviceId: 'Light', subId: '1', power: 'ON' ,  brightness: '4' , commandHex: 'F7 20 21 01 11 04 00 00 00 00 00 00 00 57 AA'.buff(), ackHex: '2001219f'.buff()},
-        {deviceId: 'Light', subId: '1', power: 'ON' ,  brightness: '5' , commandHex: 'F7 20 21 01 11 05 00 00 00 00 00 00 00 58 AA'.buff(), ackHex: '2001219f'.buff()},
-        {deviceId: 'Light', subId: '1', power: 'ON' ,  brightness: '6' , commandHex: 'F7 20 21 01 11 06 00 00 00 00 00 00 00 59 AA'.buff(), ackHex: '2001219f'.buff()},
-        {deviceId: 'Light', subId: '1', power: 'ON' ,  brightness: '7' , commandHex: 'F7 20 21 01 11 07 00 00 00 00 00 00 00 5A AA'.buff(), ackHex: '2001219f'.buff()},
-        {deviceId: 'Light', subId: '1', power: 'ON' ,  brightness: '8' , commandHex: 'F7 20 21 01 11 0A 00 00 00 00 00 00 00 5D AA'.buff(), ackHex: '2001219f'.buff()},
+        // {deviceId: 'Light', subId: '1', power: 'ON' ,  brightness: '2' , commandHex: 'F7 20 21 01 11 02 00 00 00 00 00 00 00 55 AA'.buff(), ackHex: '2001219f'.buff()},
+        // {deviceId: 'Light', subId: '1', power: 'ON' ,  brightness: '3' , commandHex: 'F7 20 21 01 11 03 00 00 00 00 00 00 00 56 AA'.buff(), ackHex: '2001219f'.buff()},
+        // {deviceId: 'Light', subId: '1', power: 'ON' ,  brightness: '4' , commandHex: 'F7 20 21 01 11 04 00 00 00 00 00 00 00 57 AA'.buff(), ackHex: '2001219f'.buff()},
+        // {deviceId: 'Light', subId: '1', power: 'ON' ,  brightness: '5' , commandHex: 'F7 20 21 01 11 05 00 00 00 00 00 00 00 58 AA'.buff(), ackHex: '2001219f'.buff()},
+        // {deviceId: 'Light', subId: '1', power: 'ON' ,  brightness: '6' , commandHex: 'F7 20 21 01 11 06 00 00 00 00 00 00 00 59 AA'.buff(), ackHex: '2001219f'.buff()},
+        // {deviceId: 'Light', subId: '1', power: 'ON' ,  brightness: '7' , commandHex: 'F7 20 21 01 11 07 00 00 00 00 00 00 00 5A AA'.buff(), ackHex: '2001219f'.buff()},
+        // {deviceId: 'Light', subId: '1', power: 'ON' ,  brightness: '8' , commandHex: 'F7 20 21 01 11 0A 00 00 00 00 00 00 00 5D AA'.buff(), ackHex: '2001219f'.buff()},
 
         //거실등2
-        {deviceId: 'Light', subId: '2', power: 'off' , commandHex: 'F7 20 21 01 12 00 00 00 00 00 00 00 00 54 AA'.buff(), ackHex: '2001219f'.buff()}, //off
+        {deviceId: 'Light', subId: '2', power: 'OFF' , commandHex: 'F7 20 21 01 12 00 00 00 00 00 00 00 00 54 AA'.buff(), ackHex: '2001219f'.buff()}, //off
         {deviceId: 'Light', subId: '2', power: 'ON' , commandHex: 'F7 20 21 01 12 01 00 00 00 00 00 00 00 55 AA'.buff(), ackHex: '2001219f'.buff()}, //on
 
         //복도등
-        {deviceId: 'Light', subId: '3', power: 'off' , commandHex: 'F7 20 21 01 13 00 00 00 00 00 00 00 00 55 AA'.buff(), ackHex: '2001219f'.buff()}, //off
+        {deviceId: 'Light', subId: '3', power: 'OFF' , commandHex: 'F7 20 21 01 13 00 00 00 00 00 00 00 00 55 AA'.buff(), ackHex: '2001219f'.buff()}, //off
         {deviceId: 'Light', subId: '3', power: 'ON' , commandHex: 'F7 20 21 01 13 01 00 00 00 00 00 00 00 56 AA'.buff(), ackHex: '2001219f'.buff()}, //on
 
+        //안방
+        {deviceId: 'Light', subId: '4', power: 'OFF' , commandHex: 'F7 20 22 01 11 00 00 00 00 00 00 00 00 55 AA'.buff(), ackHex: '2001319f'.buff()}, //off
+        {deviceId: 'Light', subId: '4', power: 'ON' , commandHex: 'F7 20 22 01 11 01 00 00 00 00 00 00 00 56 AA'.buff(), ackHex: '2001319f'.buff()}, //on
 
         //////////////////// 난방
 

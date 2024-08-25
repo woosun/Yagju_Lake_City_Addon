@@ -9,7 +9,7 @@
 
 [네이버 Homeassistant 카페](https://cafe.naver.com/koreassistant)
 
-## Version: 0.2.2
+## Version: 0.2.3
 
 ## 알고리즘 분석
 

@@ -102,6 +102,8 @@ function analyzePacket(data) {
             //analyzeFanPacket(data);
             break;
         case '2001e1':
+        case '200181':
+        case '208101':
             analyzePacket1(data,"ELV");
             break;
         case '2001c1':
@@ -126,9 +128,9 @@ function analyzePacket1(data,type){
     const packetHex = data.toString('hex');
     const packetDetails = Array.from(data).map(byte => `${byte.toString(16).padStart(2, '0')}`).join(' ');
     if (data[4] === 0x81) {
-        //if (!isPacketLogged(packetDetails)) {
+        if (!isPacketLogged(packetDetails)) {
             log('type:',type,'status:','81:', packetDetails);
-        //}
+        }
     }else if (data[4] === 0x91) {
         if (!isPacketLogged(packetDetails)) { 
             log('type:',type,'status:','91:', packetDetails);
