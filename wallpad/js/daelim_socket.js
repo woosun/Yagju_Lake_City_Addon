@@ -254,7 +254,7 @@ var updateStatus = (obj, data) => {
 
             } else{
               //파워
-              value = (data[obj.whereToReadBlock[i]-1] > 0)?"ON":"off";
+              value = (data[obj.whereToReadBlock[i]-1] > 0)?"ON":"OFF";
             }
 
           } else if (obj.deviceId == 'Thermo') {
