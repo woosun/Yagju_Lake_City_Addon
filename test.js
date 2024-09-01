@@ -8,7 +8,7 @@ const logFilePath = path.join(__dirname, 'logs.txt');
 // 설정 객체
 const CONFIG = {
     socket: {
-        deviceIP: '192.168.0.20',  // 실제 기기 IP로 변경해주세요
+        deviceIP: '192.168.0.93',  // 실제 기기 IP로 변경해주세요
         port: 8899
     }
 };

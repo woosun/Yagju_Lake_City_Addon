@@ -211,6 +211,8 @@ parser.on('data', function (data) {
     var objFoundIdx = queue.findIndex(obj => data.includes(obj.ackHex));
     if(objFoundIdx > -1) {
         log('[Serial] Success command:', data.toString('hex'));
+        var topic = util.format(CONST.STATE_TOPIC, queue[objFoundIdx].deviceId, queue[objFoundIdx].subId, 'status');
+        client.publish(topic, 'success', {retain: true}); // 성공 상태 전송
         queue.splice(objFoundIdx, 1);
         return;
     }
