@@ -1,120 +1,120 @@
-# System Architecture Documentation
+# 시스템 아키텍처 문서
 
-## Table of Contents
-- [Overview](#overview)
-- [System Design](#system-design)
-- [CVNet Protocol Specification](#cvnet-protocol-specification)
-- [Data Flow Architecture](#data-flow-architecture)
-- [State Management](#state-management)
-- [Command Queue System](#command-queue-system)
-- [Communication Layers](#communication-layers)
-- [Error Handling & Reliability](#error-handling--reliability)
-- [Performance Optimization](#performance-optimization)
-
----
-
-## Overview
-
-The Yagju Lake City Wallpad Controller is a protocol gateway that translates between the proprietary CVNet RS485 protocol and MQTT, enabling Home Assistant integration with Korean apartment building automation systems.
-
-### Design Principles
-
-1. **Protocol Agnostic MQTT Layer**: Abstracted MQTT communication for easy protocol swapping
-2. **State Consistency**: Single source of truth with duplicate prevention
-3. **Reliable Command Delivery**: Queue-based system with ACK verification
-4. **Extensible Architecture**: Modular device support through configuration arrays
-5. **Fault Tolerance**: Graceful degradation and automatic recovery
+## 목차
+- [개요](#개요)
+- [시스템 설계](#시스템-설계)
+- [CVNet 프로토콜 명세](#cvnet-프로토콜-명세)
+- [데이터 흐름 아키텍처](#데이터-흐름-아키텍처)
+- [상태 관리](#상태-관리)
+- [명령 큐 시스템](#명령-큐-시스템)
+- [통신 계층](#통신-계층)
+- [에러 처리 및 안정성](#에러-처리-및-안정성)
+- [성능 최적화](#성능-최적화)
 
 ---
 
-## System Design
+## 개요
 
-### High-Level Architecture
+야구호수공원 월패드 컨트롤러는 독점 CVNet RS485 프로토콜과 MQTT 간의 프로토콜 게이트웨이로, 한국 아파트 빌딩 자동화 시스템의 Home Assistant 통합을 가능하게 합니다.
+
+### 설계 원칙
+
+1. **프로토콜 독립적 MQTT 계층**: 쉬운 프로토콜 교체를 위한 추상화된 MQTT 통신
+2. **상태 일관성**: 중복 방지 기능이 있는 단일 정보원(Single Source of Truth)
+3. **안정적인 명령 전달**: ACK 검증이 포함된 큐 기반 시스템
+4. **확장 가능한 아키텍처**: 설정 배열을 통한 모듈식 디바이스 지원
+5. **장애 허용**: 우아한 성능 저하 및 자동 복구
+
+---
+
+## 시스템 설계
+
+### 하이레벨 아키텍처
 
 ```
 ┌───────────────────────────────────────────────────────────────────┐
-│                      Home Assistant Ecosystem                      │
+│                      Home Assistant 생태계                         │
 │                                                                    │
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────────────┐   │
-│  │   Frontend   │  │  Automations │  │  Configuration YAML  │   │
+│  │   프론트엔드  │  │  자동화      │  │  설정 YAML           │   │
 │  │   (Lovelace) │  │   (Scripts)  │  │  (MQTT Entities)     │   │
 │  └──────┬───────┘  └──────┬───────┘  └──────┬───────────────┘   │
 │         │                 │                  │                    │
 │         └─────────────────┴──────────────────┘                    │
 │                           │                                       │
-│                           │ MQTT Protocol                         │
+│                           │ MQTT 프로토콜                          │
 │  ┌────────────────────────▼───────────────────────────────────┐  │
-│  │              Mosquitto MQTT Broker                         │  │
-│  │  Topics: homenet/{device}{id}/{property}/[state|command]  │  │
-│  │  QoS: 1 (At-least-once delivery)                          │  │
+│  │              Mosquitto MQTT 브로커                         │  │
+│  │  토픽: homenet/{device}{id}/{property}/[state|command]    │  │
+│  │  QoS: 1 (최소 한 번 전달)                                 │  │
 │  └────────────────────────┬───────────────────────────────────┘  │
 └─────────────────────────────┼──────────────────────────────────────┘
                               │
                               │ TCP/IP (Port 1883)
                               │
 ┌─────────────────────────────▼──────────────────────────────────────┐
-│                 Wallpad Controller Add-on (Docker)                 │
+│                 월패드 컨트롤러 애드온 (Docker)                     │
 │  ┌──────────────────────────────────────────────────────────────┐ │
-│  │                    Application Layer                         │ │
+│  │                    애플리케이션 계층                          │ │
 │  │  ┌────────────┐  ┌────────────┐  ┌─────────────────────┐   │ │
-│  │  │MQTT Client │  │State Manager│  │ Command Queue       │   │ │
-│  │  │(Pub/Sub)   │  │(homeStatus)│  │ (Array + Timer)     │   │ │
+│  │  │MQTT 클라이언트│  │상태 관리자 │  │ 명령 큐             │   │ │
+│  │  │(Pub/Sub)   │  │(homeStatus)│  │ (배열 + 타이머)     │   │ │
 │  │  └─────┬──────┘  └─────┬──────┘  └──────┬──────────────┘   │ │
 │  │        │                │                │                   │ │
 │  │        └────────────────┴────────────────┘                   │ │
 │  │                         │                                    │ │
 │  │  ┌──────────────────────▼──────────────────────────────┐    │ │
-│  │  │         Protocol Translation Layer                   │    │ │
-│  │  │  • CVNet Packet Parser (15-byte structure)          │    │ │
-│  │  │  • Command Builder (checksum calculation)           │    │ │
-│  │  │  • Device State Mapper (DEVICE_STATE array)         │    │ │
-│  │  │  • Command Template Engine (DEVICE_COMMAND array)   │    │ │
+│  │  │         프로토콜 변환 계층                           │    │ │
+│  │  │  • CVNet 패킷 파서 (15바이트 구조)                 │    │ │
+│  │  │  • 명령 빌더 (체크섬 계산)                          │    │ │
+│  │  │  • 디바이스 상태 매퍼 (DEVICE_STATE 배열)          │    │ │
+│  │  │  • 명령 템플릿 엔진 (DEVICE_COMMAND 배열)          │    │ │
 │  │  └──────────────────────┬──────────────────────────────┘    │ │
 │  └─────────────────────────┼───────────────────────────────────┘ │
 │                            │                                      │
 │  ┌─────────────────────────▼───────────────────────────────────┐ │
-│  │              Transport Layer Abstraction                    │ │
+│  │              전송 계층 추상화                                │ │
 │  │  ┌──────────────────┐          ┌──────────────────────┐    │ │
-│  │  │ Serial Transport │    OR    │  Socket Transport    │    │ │
-│  │  │ (SerialPort lib) │          │  (net.Socket)        │    │ │
+│  │  │ 시리얼 전송      │    또는   │  소켓 전송           │    │ │
+│  │  │ (SerialPort)    │          │  (net.Socket)        │    │ │
 │  │  │ /dev/ttyUSB0     │          │  TCP: 192.168.x.x    │    │ │
 │  │  └────────┬─────────┘          └──────────┬───────────┘    │ │
 │  └───────────┼────────────────────────────────┼────────────────┘ │
 └──────────────┼────────────────────────────────┼──────────────────┘
                │                                │
-               │ RS485 Electrical               │ WiFi/Ethernet
-               │ (Physical Layer)               │ (EW11 Bridge)
+               │ RS485 전기신호                 │ WiFi/Ethernet
+               │ (물리 계층)                    │ (EW11 브릿지)
                │                                │
 ┌──────────────▼────────────────────────────────▼──────────────────┐
-│                    Wallpad Controller Hardware                    │
-│              (CVNet Protocol - Proprietary System)                │
+│                    월패드 컨트롤러 하드웨어                        │
+│              (CVNet 프로토콜 - 독점 시스템)                       │
 │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────────────┐   │
-│  │ Lighting │ │Thermostat│ │   Fan    │ │ Gas/Door/Sensors │   │
-│  │ Modules  │ │  Modules │ │  Module  │ │    Modules       │   │
+│  │ 조명     │ │ 온도조절  │ │   팬     │ │ 가스/문/센서     │   │
+│  │ 모듈     │ │  모듈    │ │  모듈    │ │    모듈          │   │
 │  └──────────┘ └──────────┘ └──────────┘ └──────────────────┘   │
 └───────────────────────────────────────────────────────────────────┘
 ```
 
-### Component Responsibilities
+### 컴포넌트 책임
 
-| Component | File | Responsibility |
-|-----------|------|----------------|
-| **Protocol Parser** | cvnet_socket.js:191-350 | Parse incoming 15-byte CVNet packets, identify device types |
-| **State Manager** | cvnet_socket.js:167 | Maintain `homeStatus` object, prevent duplicate updates |
-| **MQTT Client** | cvnet_socket.js:174-179 | Publish state changes, subscribe to command topics |
-| **Command Queue** | cvnet_socket.js:170 | FIFO queue with ACK verification, delay management |
-| **Device Mapper** | cvnet_socket.js:39-71 | Define state packet recognition patterns |
-| **Command Builder** | cvnet_socket.js:73-150 | Pre-defined control commands with checksums |
-| **Transport Layer** | cvnet_socket.js:182-188 | Socket or Serial connection with delimiter parsing |
-| **Startup Manager** | run.sh | Load config, select implementation file, start Node.js |
+| 컴포넌트 | 파일 | 책임 |
+|----------|------|------|
+| **프로토콜 파서** | cvnet_socket.js:191-350 | 수신된 15바이트 CVNet 패킷 파싱, 디바이스 타입 식별 |
+| **상태 관리자** | cvnet_socket.js:167 | `homeStatus` 객체 유지, 중복 업데이트 방지 |
+| **MQTT 클라이언트** | cvnet_socket.js:174-179 | 상태 변경 발행, 명령 토픽 구독 |
+| **명령 큐** | cvnet_socket.js:170 | ACK 검증, 지연 관리가 포함된 FIFO 큐 |
+| **디바이스 매퍼** | cvnet_socket.js:39-71 | 상태 패킷 인식 패턴 정의 |
+| **명령 빌더** | cvnet_socket.js:73-150 | 체크섬이 포함된 사전 정의 제어 명령 |
+| **전송 계층** | cvnet_socket.js:182-188 | 구분자 파싱이 있는 소켓 또는 시리얼 연결 |
+| **시작 관리자** | run.sh | 설정 로드, 구현 파일 선택, Node.js 시작 |
 
 ---
 
-## CVNet Protocol Specification
+## CVNet 프로토콜 명세
 
-### Packet Structure
+### 패킷 구조
 
-#### Standard Command/State Packet (15 bytes)
+#### 표준 명령/상태 패킷 (15바이트)
 
 ```
 ┌──────┬──────┬──────┬──────┬──────┬──────┬──────┬──────┬──────┬──────┬──────┬──────┬──────┬──────┬──────┐
@@ -123,276 +123,276 @@ The Yagju Lake City Wallpad Controller is a protocol gateway that translates bet
 │  0   │  1   │  2   │  3   │  4   │  5   │  6   │  7   │  8   │  9   │  10  │  11  │  12  │  13  │  14  │
 └──────┴──────┴──────┴──────┴──────┴──────┴──────┴──────┴──────┴──────┴──────┴──────┴──────┴──────┴──────┘
 
-START       HEADER      COMMAND      ZONE/ID      DATA       PADDING (7 bytes)      CHECKSUM   END
+시작      헤더       명령       존/ID        데이터      패딩 (7바이트)          체크섬    끝
 ```
 
-**Byte Definitions:**
-- **Byte 0**: `0xF7` - Start marker (constant)
-- **Byte 1**: `0x20` - Header/source identifier
-- **Byte 2**: Device command type
-  - `0x21`: Living room light
-  - `0x22`: Game room light
-  - `0x23`: Bedroom light
-  - `0x24`: Kids room light
-  - `0x41-0x44`: Thermostat zones 1-4
-  - `0x4A`: Thermostat state query
-- **Byte 3**: `0x01` - Fixed protocol version
-- **Byte 4**: Sub-zone identifier
-  - `0x11`: Zone 1
-  - `0x12`: Zone 2
-  - `0x13`: Zone 3
-  - `0x81`: State query response
-- **Byte 5**: Data payload
-  - For lights: `0x00` (OFF) or `0x01-0x0A` (brightness levels)
-  - For thermostat: Temperature = `(byte - 128)` in Celsius
-- **Bytes 6-12**: Padding (usually `0x00`)
-- **Byte 13**: Checksum - Sum of bytes 1-12, use last 2 hex digits
-- **Byte 14**: `0xAA` - End marker (packet delimiter)
+**바이트 정의:**
+- **바이트 0**: `0xF7` - 시작 마커 (고정)
+- **바이트 1**: `0x20` - 헤더/소스 식별자
+- **바이트 2**: 디바이스 명령 타입
+  - `0x21`: 거실등
+  - `0x22`: 게임방등
+  - `0x23`: 침실등
+  - `0x24`: 아이방등
+  - `0x41-0x44`: 온도조절기 존 1-4
+  - `0x4A`: 온도조절기 상태 쿼리
+- **바이트 3**: `0x01` - 고정 프로토콜 버전
+- **바이트 4**: 서브 존 식별자
+  - `0x11`: 존 1
+  - `0x12`: 존 2
+  - `0x13`: 존 3
+  - `0x81`: 상태 쿼리 응답
+- **바이트 5**: 데이터 페이로드
+  - 조명: `0x00` (OFF) 또는 `0x01-0x0A` (밝기 레벨)
+  - 온도조절기: 온도 = `(바이트 - 128)` 섭씨
+- **바이트 6-12**: 패딩 (보통 `0x00`)
+- **바이트 13**: 체크섬 - 바이트 1-12의 합, 마지막 2자리 16진수 사용
+- **바이트 14**: `0xAA` - 종료 마커 (패킷 구분자)
 
-#### Compact Packet (8 bytes) - Fan/Gas
+#### 압축 패킷 (8바이트) - 팬/가스
 
 ```
 ┌──────┬──────┬──────┬──────┬──────┬──────┬──────┬──────┐
-│START │ CMD  │ SUB  │ DATA │ 0x00 │ 0x00 │ 0x00 │ CSUM │
+│시작  │ CMD  │ SUB  │ DATA │ 0x00 │ 0x00 │ 0x00 │ CSUM │
 ├──────┼──────┼──────┼──────┼──────┼──────┼──────┼──────┤
 │  0   │  1   │  2   │  3   │  4   │  5   │  6   │  7   │
 └──────┴──────┴──────┴──────┴──────┴──────┴──────┴──────┘
 ```
 
-**Fan Commands:**
-- `0x78 01 01 00 00 00 00 7A`: Power OFF
-- `0x78 01 02 01 00 00 00 7C`: Low speed
-- `0x78 01 02 02 00 00 00 7D`: Medium speed
-- `0x78 01 02 03 00 00 00 7E`: High speed
+**팬 명령:**
+- `0x78 01 01 00 00 00 00 7A`: 전원 OFF
+- `0x78 01 02 01 00 00 00 7C`: 약풍
+- `0x78 01 02 02 00 00 00 7D`: 중풍
+- `0x78 01 02 03 00 00 00 7E`: 강풍
 
-**Gas Commands:**
-- `0x11 01 80 00 00 00 00 92`: Valve close (emergency)
+**가스 명령:**
+- `0x11 01 80 00 00 00 00 92`: 밸브 닫기 (긴급)
 
-### Protocol Examples
+### 프로토콜 예제
 
-#### Example 1: Living Room Light Brightness Level 5
+#### 예제 1: 거실 조명 밝기 레벨 5
 
-**Command Packet:**
+**명령 패킷:**
 ```
 F7 20 21 01 11 05 00 00 00 00 00 00 00 58 AA
 │  │  │  │  │  │                       │  │
-│  │  │  │  │  │                       │  └─ End delimiter
-│  │  │  │  │  │                       └─ Checksum (0x58)
-│  │  │  │  │  └─ Brightness = 5
-│  │  │  │  └─ Zone 1
-│  │  │  └─ Protocol version
-│  │  └─ Living room (0x21)
-│  └─ Header
-└─ Start marker
+│  │  │  │  │  │                       │  └─ 종료 구분자
+│  │  │  │  │  │                       └─ 체크섬 (0x58)
+│  │  │  │  │  └─ 밝기 = 5
+│  │  │  │  └─ 존 1
+│  │  │  └─ 프로토콜 버전
+│  │  └─ 거실 (0x21)
+│  └─ 헤더
+└─ 시작 마커
 ```
 
-**Checksum Calculation:**
+**체크섬 계산:**
 ```javascript
 sum = 0x20 + 0x21 + 0x01 + 0x11 + 0x05 + 0x00*7 = 0x58
 ```
 
-**ACK Response:**
+**ACK 응답:**
 ```
 20 01 21 9F
-│  │  │  └─ ACK flag
-│  │  └─ Command acknowledged (0x21)
-│  └─ Protocol version
-└─ Header
+│  │  │  └─ ACK 플래그
+│  │  └─ 명령 확인 (0x21)
+│  └─ 프로토콜 버전
+└─ 헤더
 ```
 
-#### Example 2: Thermostat Set Temperature 22°C
+#### 예제 2: 온도조절기 목표 온도 22°C 설정
 
-**Command Packet:**
+**명령 패킷:**
 ```
 F7 20 41 01 11 96 00 00 00 00 00 00 00 09 AA
                   │                       │
-                  │                       └─ Checksum (0x09)
-                  └─ Temp = 0x96 (150 DEC)
+                  │                       └─ 체크섬 (0x09)
+                  └─ 온도 = 0x96 (150 DEC)
                       → (150 - 128) = 22°C
 ```
 
-**Temperature Encoding Formula:**
+**온도 인코딩 공식:**
 ```javascript
-// Encode: Target temperature to HEX
+// 인코딩: 목표 온도를 HEX로
 hexValue = (temperature + 128).toString(16)
 // 22°C → (22 + 128) = 150 DEC = 0x96 HEX
 
-// Decode: HEX to Celsius
+// 디코딩: HEX를 섭씨로
 temperature = parseInt(hexValue, 16) - 128
 // 0x96 → 150 DEC → (150 - 128) = 22°C
 ```
 
-#### Example 3: Thermostat State Response
+#### 예제 3: 온도조절기 상태 응답
 
-**State Packet:**
+**상태 패킷:**
 ```
 F7 20 01 4A 81 00 96 00 94 00 00 00 00 ... AA
          │  │     │     │
-         │  │     │     └─ Zone 2 current temp (0x94 = 20°C)
-         │  │     └─ Zone 1 set temp (0x96 = 22°C)
-         │  └─ State response flag
-         └─ Thermostat state query
+         │  │     │     └─ 존 2 현재 온도 (0x94 = 20°C)
+         │  │     └─ 존 1 설정 온도 (0x96 = 22°C)
+         │  └─ 상태 응답 플래그
+         └─ 온도조절기 상태 쿼리
 ```
 
-**Parsing Logic:**
+**파싱 로직:**
 ```javascript
 // cvnet_socket.js:50
 {
   deviceId: 'Thermo',
   subId: ['1','2','3','4'],
   stateStartWithHex: 'F7 20 01 4A 81',
-  whereToReadBlock: [6, 8, 10, 12],  // Byte positions
+  whereToReadBlock: [6, 8, 10, 12],  // 바이트 위치
   setTemp: '',
   curTemp: '',
   power: ''
 }
 
-// Zone 1: byte 6 (set) + byte 7 (current)
-// Zone 2: byte 8 (set) + byte 9 (current)
+// 존 1: 바이트 6 (설정) + 바이트 7 (현재)
+// 존 2: 바이트 8 (설정) + 바이트 9 (현재)
 // ...
 ```
 
 ---
 
-## Data Flow Architecture
+## 데이터 흐름 아키텍처
 
-### State Update Flow (Wallpad → Home Assistant)
+### 상태 업데이트 흐름 (월패드 → Home Assistant)
 
 ```
 ┌────────────────┐
-│ User presses   │
-│ wallpad button │
+│ 사용자가 월패드 │
+│ 버튼 누름      │
 └────────┬───────┘
          │
          ▼
 ┌────────────────────────────────┐
-│ Wallpad broadcasts state       │
+│ 월패드가 상태 브로드캐스트      │
 │ F7 20 01 21 81 01 ... AA       │
 └────────┬───────────────────────┘
          │
-         │ RS485 Bus
+         │ RS485 버스
          ▼
 ┌────────────────────────────────┐
-│ Parser receives packet         │
-│ (delimiter: 0xAA)              │
+│ 파서가 패킷 수신               │
+│ (구분자: 0xAA)                 │
 └────────┬───────────────────────┘
          │
          ▼
 ┌────────────────────────────────┐
-│ Find matching pattern in       │
-│ DEVICE_STATE array             │
+│ DEVICE_STATE 배열에서          │
+│ 일치하는 패턴 찾기              │
 │ obj.stateStartWithHex == data  │
 └────────┬───────────────────────┘
          │
          ▼
 ┌────────────────────────────────┐
-│ Extract device properties      │
+│ 디바이스 속성 추출              │
 │ deviceId, subId, values        │
 └────────┬───────────────────────┘
          │
          ▼
 ┌────────────────────────────────┐
-│ Check homeStatus for changes   │
+│ homeStatus에서 변경사항 확인   │
 │ if (value !== homeStatus[...]) │
 └────────┬───────────────────────┘
-         │ State changed
+         │ 상태 변경됨
          ▼
 ┌────────────────────────────────┐
-│ Update homeStatus object       │
+│ homeStatus 객체 업데이트       │
 │ homeStatus[dev][sub][prop]     │
 └────────┬───────────────────────┘
          │
          ▼
 ┌────────────────────────────────┐
-│ Publish to MQTT                │
+│ MQTT에 발행                    │
 │ homenet/Light1/power/state=ON  │
 └────────┬───────────────────────┘
          │
          ▼
 ┌────────────────────────────────┐
-│ Home Assistant receives update │
-│ UI reflects new state          │
+│ Home Assistant가 업데이트 수신 │
+│ UI에 새 상태 반영              │
 └────────────────────────────────┘
 ```
 
-### Command Flow (Home Assistant → Wallpad)
+### 명령 흐름 (Home Assistant → 월패드)
 
 ```
 ┌────────────────┐
-│ User clicks HA │
-│ light switch   │
+│ 사용자가 HA에서│
+│ 조명 스위치 클릭│
 └────────┬───────┘
          │
          ▼
 ┌─────────────────────────────────┐
-│ HA publishes MQTT command       │
+│ HA가 MQTT 명령 발행             │
 │ homenet/Light1/power/command=ON │
 └────────┬────────────────────────┘
          │
          ▼
 ┌─────────────────────────────────┐
-│ MQTT client receives message    │
+│ MQTT 클라이언트가 메시지 수신   │
 │ client.on('message', ...)       │
 └────────┬────────────────────────┘
          │
          ▼
 ┌─────────────────────────────────┐
-│ Parse topic & payload           │
-│ Extract: device, subId, prop    │
+│ 토픽 및 페이로드 파싱           │
+│ 추출: device, subId, prop       │
 └────────┬────────────────────────┘
          │
          ▼
 ┌─────────────────────────────────┐
-│ Find command in DEVICE_COMMAND  │
-│ Match: deviceId, subId, value   │
+│ DEVICE_COMMAND에서 명령 찾기    │
+│ 일치: deviceId, subId, value    │
 └────────┬────────────────────────┘
          │
          ▼
 ┌─────────────────────────────────┐
-│ Build packet (if dynamic)       │
-│ e.g., calculate temp checksum   │
+│ 패킷 빌드 (동적인 경우)         │
+│ 예: 온도 체크섬 계산            │
 └────────┬────────────────────────┘
          │
          ▼
 ┌─────────────────────────────────┐
-│ Add command to queue[]          │
+│ 명령을 queue[]에 추가           │
 │ queue.push({cmd, ack, topic})   │
 └────────┬────────────────────────┘
          │
          ▼
 ┌─────────────────────────────────┐
-│ Wait for sendDelay (150ms)      │
+│ sendDelay 대기 (150ms)          │
 └────────┬────────────────────────┘
          │
          ▼
 ┌─────────────────────────────────┐
-│ Send packet to wallpad          │
+│ 월패드로 패킷 전송              │
 │ sock.write(commandHex)          │
 └────────┬────────────────────────┘
          │
          ▼
 ┌─────────────────────────────────┐
-│ Wait for ACK response           │
-│ Verify ackHex matches           │
+│ ACK 응답 대기                   │
+│ ackHex 일치 확인                │
 └────────┬────────────────────────┘
-         │ ACK received
+         │ ACK 수신됨
          ▼
 ┌─────────────────────────────────┐
-│ Remove from queue, process next │
+│ 큐에서 제거, 다음 처리          │
 └────────┬────────────────────────┘
          │
          ▼
 ┌─────────────────────────────────┐
-│ Wallpad updates device state    │
-│ Light turns ON physically       │
+│ 월패드가 디바이스 상태 업데이트 │
+│ 조명이 물리적으로 켜짐          │
 └─────────────────────────────────┘
 ```
 
 ---
 
-## State Management
+## 상태 관리
 
-### homeStatus Object Structure
+### homeStatus 객체 구조
 
 ```javascript
 homeStatus = {
@@ -424,115 +424,115 @@ homeStatus = {
 }
 ```
 
-### Duplicate Prevention Logic
+### 중복 방지 로직
 
 ```javascript
-// cvnet_socket.js:240-280 (simplified)
+// cvnet_socket.js:240-280 (단순화)
 function updateState(deviceId, subId, property, value) {
-  // Initialize nested structure if needed
+  // 필요시 중첩 구조 초기화
   if (!homeStatus[deviceId]) homeStatus[deviceId] = {};
   if (!homeStatus[deviceId][subId]) homeStatus[deviceId][subId] = {};
 
-  // Check if value actually changed
+  // 값이 실제로 변경되었는지 확인
   if (homeStatus[deviceId][subId][property] !== value) {
-    // Update internal state
+    // 내부 상태 업데이트
     homeStatus[deviceId][subId][property] = value;
 
-    // Publish to MQTT only if changed
+    // 변경된 경우에만 MQTT에 발행
     const topic = util.format(CONST.STATE_TOPIC, deviceId, subId, property);
     client.publish(topic, value, {qos: 1, retain: true});
 
-    log('State updated:', deviceId + subId, property, '=', value);
+    log('상태 업데이트:', deviceId + subId, property, '=', value);
   }
 }
 ```
 
-### State Synchronization Delay
+### 상태 동기화 지연
 
 ```javascript
-// Prevent MQTT command echo loops
-const mqttDelay = CONFIG.mqtt.receiveDelay; // Default: 10000ms
+// MQTT 명령 에코 루프 방지
+const mqttDelay = CONFIG.mqtt.receiveDelay; // 기본값: 10000ms
 
-// After sending command, ignore state updates for 10 seconds
-// This prevents self-triggering when wallpad echoes back the command
+// 명령 전송 후, 10초 동안 상태 업데이트 무시
+// 월패드가 명령을 에코백할 때 자체 트리거 방지
 ```
 
 ---
 
-## Command Queue System
+## 명령 큐 시스템
 
-### Queue Structure
+### 큐 구조
 
 ```javascript
 queue = [
   {
-    commandHex: Buffer,    // Packet to send
-    ackHex: Buffer,        // Expected response
-    topic: String,         // MQTT topic for logging
-    timestamp: Number      // When added to queue
+    commandHex: Buffer,    // 전송할 패킷
+    ackHex: Buffer,        // 예상 응답
+    topic: String,         // 로깅용 MQTT 토픽
+    timestamp: Number      // 큐 추가 시간
   },
-  // ... more commands
+  // ... 추가 명령
 ]
 ```
 
-### Queue Processing Algorithm
+### 큐 처리 알고리즘
 
 ```javascript
-// Simplified from cvnet_socket.js:400-450
+// cvnet_socket.js:400-450에서 단순화
 
 setInterval(() => {
   if (queue.length === 0) return;
 
-  const cmd = queue[0];  // FIFO: Get first command
+  const cmd = queue[0];  // FIFO: 첫 번째 명령 가져오기
 
-  // Send command to wallpad
+  // 월패드로 명령 전송
   sock.write(cmd.commandHex);
-  log('Sent command:', cmd.commandHex.toString('hex'));
+  log('명령 전송:', cmd.commandHex.toString('hex'));
 
-  // Set timeout for ACK verification
+  // ACK 검증 타임아웃 설정
   setTimeout(() => {
-    // If ACK received, parser will remove from queue
-    // If timeout, resend or log error
+    // ACK 수신시, 파서가 큐에서 제거
+    // 타임아웃시, 재전송 또는 에러 로깅
     if (queue[0] === cmd) {
-      log('WARNING: No ACK received, retrying...');
-      // Could implement retry logic here
+      log('경고: ACK 미수신, 재시도 중...');
+      // 여기서 재시도 로직 구현 가능
     }
-  }, 1000);  // Wait 1 second for ACK
+  }, 1000);  // ACK 대기 1초
 
-}, CONST.sendDelay);  // Process queue every 150ms
+}, CONST.sendDelay);  // 150ms마다 큐 처리
 ```
 
-### ACK Verification
+### ACK 검증
 
 ```javascript
-// When packet received from wallpad
+// 월패드로부터 패킷 수신 시
 parser.on('data', (data) => {
-  // Check if this is an ACK for pending command
+  // 대기 중인 명령에 대한 ACK인지 확인
   if (queue.length > 0) {
     const pending = queue[0];
 
-    // Check if data contains expected ACK
+    // 데이터에 예상 ACK가 포함되어 있는지 확인
     if (data.includes(pending.ackHex)) {
-      log('ACK received for:', pending.topic);
-      queue.shift();  // Remove from queue
-      return;  // Don't process as state update
+      log('ACK 수신:', pending.topic);
+      queue.shift();  // 큐에서 제거
+      return;  // 상태 업데이트로 처리하지 않음
     }
   }
 
-  // Not an ACK, process as state update
-  // ... state parsing logic
+  // ACK가 아니면, 상태 업데이트로 처리
+  // ... 상태 파싱 로직
 });
 ```
 
 ---
 
-## Communication Layers
+## 통신 계층
 
-### Layer 1: Physical Transport
+### 계층 1: 물리 전송
 
-#### Serial Mode (USB-to-RS485)
+#### 시리얼 모드 (USB-to-RS485)
 ```javascript
-// serialport library
+// serialport 라이브러리
 const SerialPort = require('serialport');
 const port = new SerialPort(CONFIG.serial.port, {
   baudRate: CONFIG.serial.baudrate,  // 9600
@@ -542,47 +542,47 @@ const port = new SerialPort(CONFIG.serial.port, {
 });
 ```
 
-#### Socket Mode (WiFi/Ethernet Bridge)
+#### 소켓 모드 (WiFi/이더넷 브릿지)
 ```javascript
-// net library (TCP socket)
+// net 라이브러리 (TCP 소켓)
 const net = require('net');
 const sock = new net.Socket();
 sock.connect(CONFIG.socket.port, CONFIG.socket.deviceIP);
-// Connects to EW11 or similar RS485-to-WiFi bridge
+// EW11 또는 유사한 RS485-to-WiFi 브릿지에 연결
 ```
 
-### Layer 2: Packet Delimiting
+### 계층 2: 패킷 구분
 
 ```javascript
 const Delimiter = require('@serialport/parser-delimiter');
 const parser = sock.pipe(new Delimiter({
-  delimiter: [0xAA]  // Split stream on 0xAA byte
+  delimiter: [0xAA]  // 0xAA 바이트로 스트림 분할
 }));
 
-// Ensures complete packets are processed
-// Handles partial reads and buffering automatically
+// 완전한 패킷 처리 보장
+// 부분 읽기 및 버퍼링 자동 처리
 ```
 
-### Layer 3: MQTT Communication
+### 계층 3: MQTT 통신
 
 ```javascript
-// mqtt library v4.2.8
+// mqtt 라이브러리 v4.2.8
 const client = mqtt.connect(CONST.mqttBroker, {
   clientId: CONST.clientID,
   username: CONST.mqttUser,
   password: CONST.mqttPass,
-  qos: 1,          // At-least-once delivery
-  retain: true     // Persist last state on broker
+  qos: 1,          // 최소 한 번 전달
+  retain: true     // 브로커에 마지막 상태 유지
 });
 ```
 
-**Topic Structure:**
+**토픽 구조:**
 ```
 homenet/
 ├── Light1/
 │   ├── power/
-│   │   ├── state     (published by add-on)
-│   │   └── command   (subscribed by add-on)
+│   │   ├── state     (애드온이 발행)
+│   │   └── command   (애드온이 구독)
 │   └── brightness/
 │       ├── state
 │       └── command
@@ -595,40 +595,40 @@ homenet/
 
 ---
 
-## Error Handling & Reliability
+## 에러 처리 및 안정성
 
-### Connection Retry Logic
+### 연결 재시도 로직
 
 ```javascript
-// Auto-reconnect on disconnect
+// 연결 끊김 시 자동 재연결
 sock.on('close', () => {
-  log('Socket disconnected, reconnecting in 5s...');
+  log('소켓 연결 끊김, 5초 후 재연결...');
   setTimeout(() => {
     sock.connect(CONFIG.socket.port, CONFIG.socket.deviceIP);
   }, 5000);
 });
 
-// MQTT auto-reconnect (built-in)
+// MQTT 자동 재연결 (내장)
 client.on('offline', () => {
-  log('MQTT offline, will auto-reconnect...');
+  log('MQTT 오프라인, 자동 재연결 중...');
 });
 ```
 
-### Packet Validation
+### 패킷 검증
 
 ```javascript
 function validatePacket(data) {
-  // Check minimum length
+  // 최소 길이 확인
   if (data.length < 8) return false;
 
-  // Verify start marker (for 15-byte packets)
+  // 시작 마커 확인 (15바이트 패킷용)
   if (data[0] !== 0xF7) return false;
 
-  // Verify checksum
+  // 체크섬 확인
   const calculatedSum = data.slice(1, 13).reduce((a, b) => a + b, 0);
   const expectedSum = data[13];
   if ((calculatedSum & 0xFF) !== expectedSum) {
-    log('Checksum mismatch!');
+    log('체크섬 불일치!');
     return false;
   }
 
@@ -636,53 +636,53 @@ function validatePacket(data) {
 }
 ```
 
-### State Recovery
+### 상태 복구
 
 ```javascript
-// MQTT retain flag ensures last known state persists
+// MQTT retain 플래그로 마지막 알려진 상태 유지
 client.publish(topic, value, {
-  qos: 1,      // Guaranteed delivery
-  retain: true // Broker stores last value
+  qos: 1,      // 전달 보장
+  retain: true // 브로커가 마지막 값 저장
 });
 
-// On reconnect, Home Assistant receives retained states
-// No manual state sync needed
+// 재연결 시, Home Assistant가 유지된 상태 수신
+// 수동 상태 동기화 불필요
 ```
 
 ---
 
-## Performance Optimization
+## 성능 최적화
 
-### Techniques Implemented
+### 구현된 기법
 
-1. **Packet Buffering**: Delimiter parser handles incomplete reads
-2. **State Caching**: `homeStatus` prevents redundant MQTT publishes
-3. **Queue Throttling**: 150ms delay between commands prevents bus saturation
-4. **Selective Logging**: Configurable debug mode to reduce I/O overhead
-5. **Event-Driven Architecture**: Non-blocking async operations
+1. **패킷 버퍼링**: 구분자 파서가 불완전한 읽기 처리
+2. **상태 캐싱**: `homeStatus`가 중복 MQTT 발행 방지
+3. **큐 쓰로틀링**: 명령 간 150ms 지연으로 버스 포화 방지
+4. **선택적 로깅**: 설정 가능한 디버그 모드로 I/O 오버헤드 감소
+5. **이벤트 기반 아키텍처**: 논블로킹 비동기 작업
 
-### Performance Metrics
+### 성능 메트릭
 
-| Metric | Value | Notes |
-|--------|-------|-------|
-| Command latency | <150ms | Queue delay + transmission |
-| State update latency | <50ms | Wallpad → MQTT publish time |
-| Memory footprint | ~30MB | Node.js + libraries |
-| CPU usage | <5% | Idle state on Raspberry Pi 4 |
-| Network bandwidth | <1KB/s | Average MQTT traffic |
-| Max queue depth | Unlimited | Grows if wallpad unresponsive |
+| 항목 | 수치 | 비고 |
+|------|------|------|
+| 명령 지연 시간 | <150ms | 큐 지연 + 전송 시간 |
+| 상태 업데이트 지연 | <50ms | 월패드 → MQTT 발행 시간 |
+| 메모리 사용량 | ~30MB | Node.js + 라이브러리 |
+| CPU 사용률 | <5% | 라즈베리파이 4 유휴 상태 |
+| 네트워크 대역폭 | <1KB/s | 평균 MQTT 트래픽 |
+| 최대 큐 깊이 | 무제한 | 월패드 무응답 시 증가 |
 
-### Scalability Considerations
+### 확장성 고려사항
 
-- **Multi-wallpad support**: Could run multiple instances with different configs
-- **Device limits**: MQTT topic limit is theoretical max (~10K topics)
-- **Concurrent commands**: Queue ensures serialized delivery (RS485 limitation)
+- **다중 월패드 지원**: 다른 설정으로 여러 인스턴스 실행 가능
+- **디바이스 제한**: MQTT 토픽 제한은 이론적 최대값 (~10K 토픽)
+- **동시 명령**: 큐가 직렬화된 전달 보장 (RS485 제한사항)
 
 ---
 
-## Configuration Schema
+## 설정 스키마
 
-### Complete Configuration Example
+### 완전한 설정 예제
 
 ```json
 {
@@ -708,100 +708,100 @@ client.publish(topic, value, {
 }
 ```
 
-### Parameter Descriptions
+### 파라미터 설명
 
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `model` | string | "commax" | Wallpad manufacturer (commax/samsung/daelim/hyundai) |
-| `type` | string | "serial" | Connection type (serial/socket) |
-| `sendDelay` | int | 150 | Milliseconds between queued commands |
-| `serial.port` | string | "/dev/ttyUSB0" | Serial device path |
-| `serial.baudrate` | int | 9600 | RS485 baud rate |
-| `serial.parity` | string | "none" | Parity bit (none/even/odd) |
-| `socket.deviceIP` | string | - | IP address of RS485-to-WiFi bridge |
-| `socket.port` | int | 8899 | TCP port of bridge device |
-| `mqtt.server` | string | - | MQTT broker IP address |
-| `mqtt.username` | string | - | MQTT authentication username |
-| `mqtt.password` | string | - | MQTT authentication password |
-| `mqtt.receiveDelay` | int | 10000 | Ignore MQTT commands for N ms after sending |
-| `customfile` | string | null | Custom JS implementation in /share |
+| 파라미터 | 타입 | 기본값 | 설명 |
+|----------|------|--------|------|
+| `model` | 문자열 | "commax" | 월패드 제조사 (commax/samsung/daelim/hyundai) |
+| `type` | 문자열 | "serial" | 연결 타입 (serial/socket) |
+| `sendDelay` | 정수 | 150 | 큐 명령 간 밀리초 |
+| `serial.port` | 문자열 | "/dev/ttyUSB0" | 시리얼 디바이스 경로 |
+| `serial.baudrate` | 정수 | 9600 | RS485 전송 속도 |
+| `serial.parity` | 문자열 | "none" | 패리티 비트 (none/even/odd) |
+| `socket.deviceIP` | 문자열 | - | RS485-to-WiFi 브릿지 IP 주소 |
+| `socket.port` | 정수 | 8899 | 브릿지 디바이스 TCP 포트 |
+| `mqtt.server` | 문자열 | - | MQTT 브로커 IP 주소 |
+| `mqtt.username` | 문자열 | - | MQTT 인증 사용자명 |
+| `mqtt.password` | 문자열 | - | MQTT 인증 비밀번호 |
+| `mqtt.receiveDelay` | 정수 | 10000 | 전송 후 N ms 동안 MQTT 명령 무시 |
+| `customfile` | 문자열 | null | /share의 커스텀 JS 구현 |
 
 ---
 
-## Development & Debugging
+## 개발 및 디버깅
 
-### Packet Analysis Tool
+### 패킷 분석 도구
 
 ```bash
-# Run packet sniffer
+# 패킷 스니퍼 실행
 node test.js /dev/ttyUSB0 9600 none
 
-# Output example:
-[2024-01-15 14:30:22] New packet: F7 20 01 21 81 01 05 00 00...
-[2024-01-15 14:30:22] Type: Lighting
-[2024-01-15 14:30:22] Living room light ON, brightness 5
+# 출력 예제:
+[2024-01-15 14:30:22] 새 패킷: F7 20 01 21 81 01 05 00 00...
+[2024-01-15 14:30:22] 타입: 조명
+[2024-01-15 14:30:22] 거실등 ON, 밝기 5
 ```
 
-### Adding New Device Support
+### 새 디바이스 지원 추가
 
-1. **Capture packets** using test.js
-2. **Identify patterns** in DEVICE_STATE array
-3. **Define commands** in DEVICE_COMMAND array
-4. **Calculate checksums** for command packets
-5. **Test** with Home Assistant MQTT
+1. **패킷 캡처** - test.js 사용
+2. **패턴 식별** - DEVICE_STATE 배열에서
+3. **명령 정의** - DEVICE_COMMAND 배열에서
+4. **체크섬 계산** - 명령 패킷용
+5. **테스트** - Home Assistant MQTT로
 
-### Custom Implementation
+### 커스텀 구현
 
-Create `/share/my_wallpad.js`:
+`/share/my_wallpad.js` 생성:
 
 ```javascript
 const mqtt = require('mqtt');
 const SerialPort = require('serialport');
 
-// Your custom protocol implementation
-// Must export same interface as existing files
+// 커스텀 프로토콜 구현
+// 기존 파일과 동일한 인터페이스 내보내기 필요
 ```
 
 ---
 
-## Security Considerations
+## 보안 고려사항
 
-1. **MQTT Authentication**: Always use username/password
-2. **Network Segmentation**: Isolate wallpad network from WAN
-3. **Firmware Updates**: Keep Home Assistant and add-on updated
-4. **Access Control**: Use Home Assistant user authentication
-5. **Packet Injection Risk**: RS485 bus is not encrypted (physical security required)
-
----
-
-## Future Enhancements
-
-### Planned Features
-- [ ] Elevator call integration via additional packet analysis
-- [ ] Energy monitoring (if supported by wallpad)
-- [ ] Web UI for configuration instead of JSON editing
-- [ ] Automatic checksum calculation for custom commands
-- [ ] Multi-language support (Korean/English)
-- [ ] Home Assistant MQTT auto-discovery support
-
-### Research Areas
-- Protocol encryption layer for enhanced security
-- Machine learning for unknown packet classification
-- Bidirectional state verification (read-back confirmation)
-- Support for newer CVNet protocol versions
+1. **MQTT 인증**: 항상 사용자명/비밀번호 사용
+2. **네트워크 분리**: 월패드 네트워크를 WAN에서 격리
+3. **펌웨어 업데이트**: Home Assistant와 애드온을 최신 상태로 유지
+4. **접근 제어**: Home Assistant 사용자 인증 사용
+5. **패킷 주입 위험**: RS485 버스는 암호화되지 않음 (물리 보안 필요)
 
 ---
 
-## References
+## 향후 개선사항
 
-- **CVNet Protocol**: Reverse-engineered through packet analysis
+### 계획된 기능
+- [ ] 추가 패킷 분석을 통한 엘리베이터 호출 통합
+- [ ] 에너지 모니터링 (월패드 지원 시)
+- [ ] JSON 편집 대신 웹 UI 설정
+- [ ] 커스텀 명령용 자동 체크섬 계산
+- [ ] 다국어 지원 (한국어/영어)
+- [ ] Home Assistant MQTT 자동 검색 지원
+
+### 연구 영역
+- 향상된 보안을 위한 프로토콜 암호화 계층
+- 미지 패킷 분류를 위한 머신러닝
+- 양방향 상태 검증 (읽기 확인)
+- 최신 CVNet 프로토콜 버전 지원
+
+---
+
+## 참고 자료
+
+- **CVNet 프로토콜**: 패킷 분석을 통한 리버스 엔지니어링
 - **Home Assistant MQTT**: https://www.home-assistant.io/integrations/mqtt/
-- **RS485 Standard**: TIA-485-A electrical specification
+- **RS485 표준**: TIA-485-A 전기 규격
 - **Node.js SerialPort**: https://serialport.io/docs/
-- **MQTT Specification**: OASIS MQTT Version 3.1.1
+- **MQTT 사양**: OASIS MQTT Version 3.1.1
 
 ---
 
-**Document Version**: 1.0
-**Last Updated**: 2024-01-15
-**Maintained By**: YOSKR (based on Daehwan Kang's original work)
+**문서 버전**: 1.0
+**최종 업데이트**: 2024년 7월 15일
+**관리**: YOSKR (강대환님의 원본 작업 기반)
