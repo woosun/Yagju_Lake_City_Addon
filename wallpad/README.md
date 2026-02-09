@@ -11,13 +11,15 @@
 
 [네이버 Homeassistant 카페](https://cafe.naver.com/koreassistant)
 
-## Version: 0.2.7
+## Version: 0.2.8
 
 ## 알고리즘 분석
 
 1. 이녀석이 rs485 와 통신하여 패킷을 가져와서 분석후
 2. 분석한 패킷을 기준으로 토픽을 만들어 MQTT로 전송
    > 분석한 패킷은 아래형식으로 리턴
+   >
+
    ```
    // 상태 Topic (/homenet/${deviceId}${subId}/${property}/state/ = ${value})
    // 명령어 Topic (/homenet/${deviceId}${subId}/${property}/command/ = ${value})

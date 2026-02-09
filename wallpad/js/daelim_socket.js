@@ -116,8 +116,10 @@ const CONST = {
       power: "",
     },
 
-    //엘리베이터
-    //{deviceId: 'elevator', subId: ['1'], stateStartWithHex: 'F7 20 01 22 81'.buff() , whereToReadBlock: [6], power: ''},
+    //엘리베이터 - 현재 위치 (data[11], data[12]는 ASCII)
+    {deviceId: 'Elevator', subId: ['1'], stateStartWithHex: 'f7 20 01 e1 81'.buff(), whereToReadBlock: [11, 12], currentFloor: '', targetFloor: ''},
+    //엘리베이터 - 층수 표시 (data[5])
+    {deviceId: 'Elevator', subId: ['1'], stateStartWithHex: 'f7 20 01 22 81'.buff(), whereToReadBlock: [5], floor: ''},
     //현관문
     {
       deviceId: "Door",
@@ -570,11 +572,22 @@ var updateStatus = (obj, data) => {
         }
       } else if (obj.deviceId == "Gas") {
         value = data[obj.whereToReadBlock[i]] > 0 ? "ON" : "off";
+      } else if (obj.deviceId == 'Elevator') {
+        //엘리베이터 - ASCII로 인코딩된 층수 변환
+        if (stateName == 'currentFloor' || stateName == 'targetFloor') {
+          // data[11]=현재층(ASCII), data[12]=목적지층(ASCII)
+          var byteIdx = (stateName == 'currentFloor') ? 0 : 1;
+          var asciiVal = data[obj.whereToReadBlock[byteIdx]];
+          value = String.fromCharCode(asciiVal); // ASCII → 문자
+        } else if (stateName == 'floor') {
+          // data[5]에 층수 값 (숫자)
+          value = data[obj.whereToReadBlock[0]].toString();
+        }
       } else {
         //etc..
         value = obj[stateName];
       }
-
+    
       // 상태값이 없거나 상태가 같으면 반영 중지
       var curStatus = homeStatus[obj.deviceId + _subId + stateName];
       if (curStatus === value) return;

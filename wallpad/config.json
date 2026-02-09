@@ -1,6 +1,6 @@
 {
   "name": "CVNET Wallpad Controller with RS485",
-  "version": "0.2.7",
+  "version": "0.2.8",
   "slug": "wallpad",
   "description": "CVNET 월패드가 가능한 nodejs 서버 애드온입니다.",
   "arch": ["armhf", "armv7", "aarch64", "amd64", "i386"],
