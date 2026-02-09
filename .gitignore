@@ -1,0 +1,21 @@
+logs.txt
+logs_*.txt
+*.log
+
+# Node.js
+*/node_modules
+node_modules/
+
+# Test files (may contain personal info)
+test.js
+test1.js
+*_test.js
+*_local.js
+
+# Documentation with personal info
+AGENTS.md
+
+# IDE
+.vscode
+.idea
+*.swp
